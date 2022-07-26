@@ -71,3 +71,5 @@ Thumbs.db
 *.dll
 *.exe
 
+# Libraries or just things that take up space
+libraries/*
