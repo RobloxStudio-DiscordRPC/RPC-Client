@@ -11,7 +11,7 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent) {
 }
 
 MainWindow::~MainWindow() {
-    delete trayicon;
-    delete ui;
+    safedelete(trayicon);
+    safedelete(ui);
 }
 

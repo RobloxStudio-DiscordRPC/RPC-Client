@@ -6,6 +6,8 @@
 #include <QStyle>
 #include <classes/systemtrayicon.h>
 
+#define safedelete(x) {if ((x)!=NULL) {delete (x); (x)=NULL;}}
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
