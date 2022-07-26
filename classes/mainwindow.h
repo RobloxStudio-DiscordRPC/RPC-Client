@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QApplication>
 #include <QStyle>
+#include <classes/server.h>
 #include <classes/systemtrayicon.h>
 
 #define safedelete(x) {if ((x)!=NULL) {delete (x); (x)=NULL;}}
@@ -16,13 +17,16 @@ class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
-public:
-    MainWindow(QWidget *parent = nullptr);
-    ~MainWindow();
+    public:
+        MainWindow(QWidget *parent = nullptr);
+        ~MainWindow();
 
-private:
-    Ui::MainWindow *ui;
+    private:
+        Ui::MainWindow *ui;
 
-    SystemTrayIcon* trayicon;
+        SystemTrayIcon* trayicon;
+        Server* server;
+
+        void initServer();
 };
 #endif // MAINWINDOW_H
