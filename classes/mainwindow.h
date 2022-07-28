@@ -4,7 +4,7 @@
 #include <QMainWindow>
 #include <QApplication>
 #include <QStyle>
-#include <classes/server.h>
+#include <classes/listener.h>
 #include <classes/systemtrayicon.h>
 
 #define safedelete(x) {if ((x)!=NULL) {delete (x); (x)=NULL;}}
@@ -25,7 +25,7 @@ class MainWindow : public QMainWindow
         Ui::MainWindow *ui;
 
         SystemTrayIcon* trayicon;
-        Server* server;
+        Listener* server;
 
         void initServer();
 };

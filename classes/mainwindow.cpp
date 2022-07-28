@@ -7,9 +7,14 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent) {
 
     trayicon = new SystemTrayIcon;
     trayicon->show();
-    //trayicon->showMessage("message","body",trayicon->icon());
+    trayicon->showMessage("hello","start listening!",trayicon->icon());
 
     initServer();
+
+    connect(
+        server, &Listener::posted,
+        this, [this](){trayicon->showMessage("whoop!","request!",trayicon->icon());}
+    );
 }
 
 MainWindow::~MainWindow() {
@@ -19,6 +24,14 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::initServer() {
-    server = new Server(this);
+    server = new Listener(this);
+
+    /*
     qDebug() << "server:" << server->serverName() << '(' << server->errorString() << ')';
+
+    connect(
+        server, &Server::newConnection,
+        this, [this](){trayicon->showMessage("whoop!","new connection!",trayicon->icon());}
+    );
+    */
 }

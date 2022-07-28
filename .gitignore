@@ -58,6 +58,7 @@ Thumbs.db
 *.opensdf
 *.vcxproj
 *vcxproj.*
+.vs/*
 
 # MinGW generated files
 *.Debug
@@ -66,11 +67,14 @@ Thumbs.db
 # Python byte code
 *.pyc
 
+# Qt Design Studio generated files
+*.qtds
+
 # Binaries
 # --------
 *.dll
 *.exe
 
 # Libraries or just things that take up space
-lib/*
+libs/*
 dist/*
