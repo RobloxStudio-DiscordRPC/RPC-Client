@@ -11,10 +11,7 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent) {
 
     initServer();
 
-    connect(
-        server, &Listener::posted,
-        this, [this](){trayicon->showMessage("whoop!","request!",trayicon->icon());}
-    );
+    initRichPresence();
 }
 
 MainWindow::~MainWindow() {
@@ -25,13 +22,13 @@ MainWindow::~MainWindow() {
 
 void MainWindow::initServer() {
     server = new Listener(this);
-
-    /*
-    qDebug() << "server:" << server->serverName() << '(' << server->errorString() << ')';
-
     connect(
-        server, &Server::newConnection,
-        this, [this](){trayicon->showMessage("whoop!","new connection!",trayicon->icon());}
+        server, &Listener::posted,
+        this, [this](){trayicon->showMessage("whoop!","request!",trayicon->icon());}
     );
-    */
+}
+
+void MainWindow::initRichPresence() {
+    richPresence = new RichPresence(this);
+    richPresence->start();
 }

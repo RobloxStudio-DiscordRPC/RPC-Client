@@ -2,10 +2,9 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QApplication>
-#include <QStyle>
 #include <classes/listener.h>
 #include <classes/systemtrayicon.h>
+#include <classes/richpresence.h>
 
 #define safedelete(x) {if ((x)!=NULL) {delete (x); (x)=NULL;}}
 
@@ -26,7 +25,9 @@ class MainWindow : public QMainWindow
 
         SystemTrayIcon* trayicon;
         Listener* server;
+        RichPresence* richPresence;
 
         void initServer();
+        void initRichPresence();
 };
 #endif // MAINWINDOW_H
