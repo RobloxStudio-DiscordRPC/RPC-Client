@@ -1,4 +1,5 @@
 #include "richpresence.h"
+#include <thread>
 
 RichPresence::RichPresence(QObject *parent): QThread{parent} {
     initDiscord();
@@ -89,8 +90,9 @@ void RichPresence::start() {
 
 void RichPresence::run() {
     do {
+        msleep(16);
         discordCore->RunCallbacks();
-        std::this_thread::sleep_for(std::chrono::milliseconds(16));
+        //std::this_thread::sleep_for(std::chrono::milliseconds(16));
     } while (!isStopped);
 }
 
