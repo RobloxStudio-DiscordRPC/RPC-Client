@@ -19,12 +19,10 @@ else:unix: LIBS += -L$$PWD/libs/discord_game_sdk/lib/ -ldiscord_game_sdk
 INCLUDEPATH += $$PWD/libs/discord_game_sdk/cpp
 DEPENDPATH += $$PWD/libs/discord_game_sdk/cpp
 
-SOURCES += $$files(*.cpp, true) \
-    classes/richpresence.cpp
+SOURCES += $$files(*.cpp, true)
 #SOURCES -= $$files(libs/*, true)
 
-HEADERS += $$files(*.h, true) \
-    classes/richpresence.h
+HEADERS += $$files(*.h, true)
 HEADERS -= $$files(libs/*, true)
 
 FORMS  = $$files(*.ui, true)
