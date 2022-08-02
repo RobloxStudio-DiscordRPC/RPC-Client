@@ -65,19 +65,17 @@ void RichPresence::initDiscord() {
 
 void RichPresence::initActivity() {
     activity = new Activity{};
-    activity->SetName("name");
     activity->SetDetails("Working on: X");
     activity->SetState("Editing script: Y");
-    //activity->GetAssets().SetSmallImage("rbxstudio");
-    activity->GetAssets().SetSmallText("Roblox Studio");
+    activity->GetAssets().SetLargeImage("rbxstudio");
+    activity->GetAssets().SetLargeText("Roblox Studio");
     //activity->GetAssets().SetLargeImage("script");
-    activity->GetAssets().SetLargeText("Y");
+    //activity->GetAssets().SetLargeText(" Y ");
     activity->SetType(ActivityType::Playing);
     //activity->GetSecrets().SetJoin("Go to game");
-    //activity->GetSecrets().SetSpectate("GitHub repository");
+    activity->GetSecrets().SetSpectate("");
 
     manager->UpdateActivity(*activity, [this](const Result result) {
-        qDebug() << QString(activity->GetName());
         RichPresence::errorMsg("Couldn't update rich presence!", result, false);
     });
 }
