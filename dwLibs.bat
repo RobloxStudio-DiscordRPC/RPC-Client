@@ -1,4 +1,4 @@
-@echo on
+@echo off
 
 echo dwlibs.bat
 echo run script anywhere and libs for RobloxStudio-DiscordRPC will install in %~dp0\libs\
