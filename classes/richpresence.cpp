@@ -69,11 +69,7 @@ void RichPresence::initActivity() {
     activity->SetState("Editing script: Y");
     activity->GetAssets().SetLargeImage("rbxstudio");
     activity->GetAssets().SetLargeText("Roblox Studio");
-    //activity->GetAssets().SetLargeImage("script");
-    //activity->GetAssets().SetLargeText(" Y ");
     activity->SetType(ActivityType::Playing);
-    //activity->GetSecrets().SetJoin("Go to game");
-    activity->GetSecrets().SetSpectate("");
 
     manager->UpdateActivity(*activity, [this](const Result result) {
         RichPresence::errorMsg("Couldn't update rich presence!", result, false);
@@ -83,12 +79,14 @@ void RichPresence::initActivity() {
 void RichPresence::start() {
     isStopped = false;
     QThread::start();
+    setPriority(Priority::IdlePriority);
 }
 
 void RichPresence::run() {
     do {
         discordCore->RunCallbacks();
-        std::this_thread::sleep_for(std::chrono::milliseconds(16));
+        QThread::msleep(16);
+        //std::this_thread::sleep_for(std::chrono::milliseconds(16));
     } while (!isStopped);
 }
 

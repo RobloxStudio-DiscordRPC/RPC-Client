@@ -2,6 +2,7 @@
 
 Listener::Listener(QObject* parent): QThread(parent) {
     start();
+    setPriority(Priority::IdlePriority);
 }
 
 void Listener::run() {
