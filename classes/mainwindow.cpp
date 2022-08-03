@@ -24,8 +24,24 @@ void MainWindow::initServer() {
     server = new Listener(this);
     connect(
         server, &Listener::posted,
-        this, [this](){trayicon->showMessage("whoop!","request!",trayicon->icon());}
+        this, &MainWindow::loadParams
     );
+}
+
+void MainWindow::loadParams(QJsonObject params) {
+
+    const bool editingExists = params.contains("EDITING");
+    if (editingExists) {
+        const QJsonValue  editingVal = params.value("EDITING");
+        const QJsonObject editing = editingVal.toObject();
+
+        const QString out = QString("name: %1, type: %2").arg(
+            editing.value("NAME").toString(),
+            editing.value("TYPE").toString()
+        );
+
+        trayicon->showMessage("update rich presence", out);
+    }
 }
 
 void MainWindow::initRichPresence() {

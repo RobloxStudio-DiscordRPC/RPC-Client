@@ -72,6 +72,10 @@ void RichPresence::initActivity() {
     activity->GetAssets().SetLargeText("Roblox Studio");
     activity->SetType(ActivityType::Playing);
 
+    updateActivity();
+}
+
+void RichPresence::updateActivity() {
     manager->UpdateActivity(*activity, [this](const Result result) {
         RichPresence::errorMsg("Couldn't update rich presence!", result, false);
     });

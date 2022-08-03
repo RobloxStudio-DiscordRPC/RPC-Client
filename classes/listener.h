@@ -2,6 +2,9 @@
 #define LISTENER_H
 
 #include <QThread>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QDebug>
 #include <httplib.h>
 #include <string>
 
@@ -15,7 +18,7 @@ class Listener : public QThread, Server {
         ~Listener();
 
         signals:
-            void posted();
+            void posted(QJsonObject params);
 
     protected:
         void run();

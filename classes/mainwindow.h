@@ -5,6 +5,7 @@
 #include <classes/listener.h>
 #include <classes/systemtrayicon.h>
 #include <classes/richpresence.h>
+#include <sstream>
 
 #define safedelete(x) {if ((x)!=NULL) {delete (x); (x)=NULL;}}
 
@@ -29,5 +30,8 @@ class MainWindow : public QMainWindow
 
         void initServer();
         void initRichPresence();
+
+        private slots:
+            void loadParams(QJsonObject params);
 };
 #endif // MAINWINDOW_H

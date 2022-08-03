@@ -19,6 +19,7 @@ class RichPresence : public QThread {
         const ClientId appId = 1002325872545644574;
 
         Activity* activity;
+        void updateActivity();
 
         void start();
         void stop ();
