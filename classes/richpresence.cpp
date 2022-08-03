@@ -1,4 +1,5 @@
 #include "richpresence.h"
+#include <thread>
 
 RichPresence::RichPresence(QObject *parent): QThread{parent} {
     initDiscord();
