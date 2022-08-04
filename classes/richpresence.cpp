@@ -66,19 +66,17 @@ void RichPresence::initDiscord() {
 
 void RichPresence::initActivity() {
     activity = new Activity{};
-    activity->SetName("name");
     activity->SetDetails("Working on: X");
     activity->SetState("Editing script: Y");
-    //activity->GetAssets().SetSmallImage("rbxstudio");
-    activity->GetAssets().SetSmallText("Roblox Studio");
-    //activity->GetAssets().SetLargeImage("script");
-    activity->GetAssets().SetLargeText("Y");
+    activity->GetAssets().SetLargeImage("rbxstudio");
+    activity->GetAssets().SetLargeText("Roblox Studio");
     activity->SetType(ActivityType::Playing);
-    //activity->GetSecrets().SetJoin("Go to game");
-    //activity->GetSecrets().SetSpectate("GitHub repository");
 
+    updateActivity();
+}
+
+void RichPresence::updateActivity() {
     manager->UpdateActivity(*activity, [this](const Result result) {
-        qDebug() << QString(activity->GetName());
         RichPresence::errorMsg("Couldn't update rich presence!", result, false);
     });
 }
@@ -86,12 +84,13 @@ void RichPresence::initActivity() {
 void RichPresence::start() {
     isStopped = false;
     QThread::start();
+    setPriority(Priority::IdlePriority);
 }
 
 void RichPresence::run() {
     do {
-        msleep(16);
         discordCore->RunCallbacks();
+        QThread::msleep(16);
         //std::this_thread::sleep_for(std::chrono::milliseconds(16));
     } while (!isStopped);
 }
