@@ -4,11 +4,11 @@ I'm not sure about Linux or MacOS, this tutorial is preferably for Windows machi
 
 ### Chapters
 
-1. [Get project files](#Get project files)
-    1. [Clone the repository](#Clone the repository)
-2. [Download libraries](#Download libraries)
-    1. [Install Qt](#Install Qt)
-    2. [Download other libraries](#Download other libraries)
+1. [Get project files](#Get-project-files)
+    1. [Clone the repository](#Clone-the-repository)
+2. [Download libraries](#Download-libraries)
+    1. [Install Qt](#Install-Qt)
+    2. [Download other libraries](#Download-other-libraries)
 3. [Building](#Building)
     1. [Building](#Building)
     1. [Running](#Running)
@@ -62,6 +62,6 @@ Finally, open Qt Creator, and with Qt Creator, open the cloned repository.
 
 Press the hammer button at the bottom left corner of the window, or press Ctrl-B
 
-## Running
+### Running
 
 Press the play button at the bottom left corner of the window, or press Ctrl-R
