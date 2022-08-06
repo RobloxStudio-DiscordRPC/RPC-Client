@@ -47,8 +47,8 @@ I have a few things checked, but I only want you to focus on those with an arrow
 
 ![qt install 2](/doc/assets/qtInstall2.png)
 
-1. Pick the version of MSVC that matches your machine architecture
-2. Might need to check this aswell
+- A - Pick the version of MSVC that matches your machine architecture
+- B - Might need to check this aswell
 
 **If this doesn't go as planned, please file an issue**
 
