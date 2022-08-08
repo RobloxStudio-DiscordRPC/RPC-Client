@@ -40,7 +40,7 @@ void MainWindow::loadParams(QJsonObject params) {
         const QString out = QString("name: %1, type: %2").arg(name,type);
 
         Activity* activity = richPresence->activity;
-        activity->SetState(name.insert(0, new QByteArray("Editing script: ")));
+        activity->SetState(("Editing script: " + name).toLocal8Bit().data());
         activity->GetAssets().SetSmallImage(type.toLower().toStdString().data());
         activity->GetAssets().SetSmallText(name.toStdString().data());
 
