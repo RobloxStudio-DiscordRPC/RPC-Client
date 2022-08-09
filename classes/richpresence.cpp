@@ -3,7 +3,10 @@
 
 RichPresence::RichPresence(QObject *parent): QThread{parent} {
     initDiscord();
-    initActivity();
+
+    if (coreError==Result::Ok) {
+        initActivity();
+    }
 }
 
 RichPresence::~RichPresence() {
@@ -12,16 +15,10 @@ RichPresence::~RichPresence() {
         wait();
     }
 
-    // delete manager;
-    /**
-        deleting the (pointer to the) manager causes an error to occur
-        investigating later
-    */
-
-    discordCore.reset(); // deinit (destroy) core
+    delete discordCore;
 }
 
-void RichPresence::errorMsg(const QString msg, const Result errCode, const bool quit) {
+void RichPresence::errorMsg(const QString msg, const Result errCode) {
     if (errCode == Result::Ok) return;
 
     const QString txt = (
@@ -42,26 +39,37 @@ void RichPresence::errorMsg(const QString msg, const Result errCode, const bool 
     */
     qDebug() << txt;
 
-    if (quit) {
-        QCoreApplication::instance()->quit();
-    }
+    //QCoreApplication::instance()->quit();
 }
 
 void RichPresence::initDiscord() {
     Core* core{};
+    discordCore = core;
     Result resp = Core::Create(
         appId,
         DiscordCreateFlags_NoRequireDiscord,
-        &core
+        &discordCore
     );
 
     if (resp != Result::Ok) {
         RichPresence::errorMsg("Couldn't initialize the Discord service!", resp);
     }
 
-    discordCore.reset(core);
+    if (!discordCore) {
+        resp = Result::InternalError;
+    }
 
-    manager = &discordCore->ActivityManager();
+    coreError = resp;
+
+    if (resp == Result::Ok) {
+        manager = &discordCore->ActivityManager();
+    } else {
+        activity = NULL;
+
+        delete discordCore;
+        discordCore = NULL;
+        manager = NULL;
+    }
 }
 
 void RichPresence::initActivity() {
@@ -77,7 +85,8 @@ void RichPresence::initActivity() {
 
 void RichPresence::updateActivity() {
     manager->UpdateActivity(*activity, [this](const Result result) {
-        RichPresence::errorMsg("Couldn't update rich presence!", result, false);
+        rpcError = result;
+        //RichPresence::errorMsg("Couldn't update rich presence!", result);
     });
 }
 

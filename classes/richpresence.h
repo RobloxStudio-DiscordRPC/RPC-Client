@@ -21,6 +21,9 @@ class RichPresence : public QThread {
         Activity* activity;
         void updateActivity();
 
+        discord::Result coreError;
+        discord::Result  rpcError;
+
         void start();
         void stop ();
 
@@ -28,13 +31,12 @@ class RichPresence : public QThread {
         void run();
 
     private:
-        static void errorMsg(
+        void errorMsg(
             const QString msg,
-            const discord::Result errCode,
-            const bool quit = true
+            const discord::Result errCode
         );
 
-        std::unique_ptr<Core> discordCore;
+        Core* discordCore;
         void initDiscord();
 
         ActivityManager* manager;

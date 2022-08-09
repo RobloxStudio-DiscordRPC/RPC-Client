@@ -4,6 +4,8 @@
 MainWindow::MainWindow(QWidget *parent): QMainWindow(parent) {
     ui = new Ui::MainWindow();
     ui->setupUi(this);
+    richPresence=NULL;
+    server=NULL;
 
     trayicon = new SystemTrayIcon;
     trayicon->show();
@@ -12,6 +14,18 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent) {
     initServer();
 
     initRichPresence();
+
+    /*
+    connect(
+        ui->exitBtn, &QPushButton::pressed,
+        QApplication::instance(), &QCoreApplication::exit
+    );
+    */
+
+    connect(
+        ui->dscReconnectBtn, &QPushButton::pressed,
+        this, &MainWindow::initRichPresence
+    );
 }
 
 MainWindow::~MainWindow() {
@@ -43,12 +57,52 @@ void MainWindow::loadParams(QJsonObject params) {
         activity->SetState(("Editing script: " + name).toLocal8Bit().data());
         activity->GetAssets().SetSmallImage(type.toLower().toStdString().data());
         activity->GetAssets().SetSmallText(name.toStdString().data());
+        richPresence->updateActivity();
 
         trayicon->showMessage("update rich presence", out);
     }
 }
 
 void MainWindow::initRichPresence() {
+    if (richPresence!=NULL){
+        delete richPresence;
+        richPresence=NULL;
+    }
     richPresence = new RichPresence(this);
-    richPresence->start();
+
+    const discord::Result error = richPresence->coreError;
+    if (error == discord::Result::Ok) {
+        ui->dscFound->setText("Discord found!");
+        richPresence->start();
+    } else {
+        switch (error) {
+
+            case discord::Result::InternalError:
+                ui->dscFound->setText("Discord not found!");
+                break;
+
+            default:
+                const int code = (int) error;
+                const QString msg = "An error has occured! Error code: "+QString::number(code);
+
+                /*
+                if error code is invalid (is invalid enum)
+                then don't show an error message and instead print warning
+
+                43 because that's where the discord::Result enum ends
+                */
+                if ((code < 0) || (code > 43)) {
+                    qWarning() << msg;
+                    break;
+                };
+
+                QMessageBox::critical(
+                    nullptr,
+                    "Discord RPC",
+                    msg,
+                    "Ok"
+                );
+                break;
+        }
+    }
 }
