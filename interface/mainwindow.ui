@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>500</width>
-    <height>300</height>
+    <height>315</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -163,7 +163,7 @@
            </sizepolicy>
           </property>
           <property name="text">
-           <string>This program connects to a Roblox Studio plugin, to display custom rich presence for Roblox Studio.</string>
+           <string>This program connects to a Roblox Studio plugin, to display Discord custom rich presence for Roblox Studio.</string>
           </property>
           <property name="wordWrap">
            <bool>true</bool>
@@ -173,7 +173,7 @@
         <item row="3" column="0">
          <widget class="QLabel" name="copyright">
           <property name="text">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;By &lt;a href=&quot;https://github.com/MatusGuy&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#007af4;&quot;&gt;MatusGuy&lt;/span&gt;&lt;/a&gt; © 2022-2023&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;By &lt;a href=&quot;https://github.com/MatusGuy&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#007af4;&quot;&gt;MatusGuy&lt;/span&gt;&lt;/a&gt; &amp;amp; Localtings © 2022-2023&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
          </widget>
         </item>
