@@ -28,6 +28,8 @@ HEADERS -= $$files(libs/*, true)
 FORMS  = $$files(*.ui, true)
 UI_DIR = ./interface
 
+RESOURCES = assets/assets.qrc
+
 # libraries
 
 ## httplib and possibly others
