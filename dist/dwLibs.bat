@@ -11,7 +11,7 @@ echo - git
 set httplibRepo=..\httplib\
 set discordDir=libs\discord_game_sdk\
 
-pushd %~dp0
+pushd %~dp0\..\
     :: reset libs folder
     call :delDir libs
 
