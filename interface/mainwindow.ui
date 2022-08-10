@@ -22,7 +22,7 @@
     <item row="0" column="0">
      <widget class="QTabWidget" name="tabs">
       <property name="currentIndex">
-       <number>0</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="homeTab">
        <attribute name="title">
@@ -154,16 +154,26 @@
         <item row="6" column="0">
          <layout class="QHBoxLayout" name="btnLnkLayout">
           <item>
-           <widget class="QPushButton" name="programRepo">
+           <widget class="HyperlinkButton" name="programRepo">
             <property name="text">
              <string>Program GitHub repository</string>
+            </property>
+            <property name="destination" stdset="0">
+             <url>
+              <string>https://github.com/RobloxStudio-DiscordRPC/Plugin</string>
+             </url>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="pluginRepo">
+           <widget class="HyperlinkButton" name="pluginRepo">
             <property name="text">
              <string>Roblox Studio plugin GitHub repository</string>
+            </property>
+            <property name="destination" stdset="0">
+             <url>
+              <string>https://github.com/RobloxStudio-DiscordRPC/Plugin</string>
+             </url>
             </property>
            </widget>
           </item>
@@ -236,6 +246,11 @@
    <extends>QWidget</extends>
    <header>findstatusdisplay.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>HyperlinkButton</class>
+   <extends>QPushButton</extends>
+   <header>hyperlinkbutton.h</header>
   </customwidget>
  </customwidgets>
  <resources>
