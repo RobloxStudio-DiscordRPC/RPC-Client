@@ -23,13 +23,13 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent) {
     */
 
     connect(
-        ui->dscReconnectBtn, &QPushButton::pressed,
+        ui->dscStatus, &FindStatusDisplay::research,
         this, &MainWindow::initRichPresence
     );
 
     refreshRbxStudio();
     connect(
-        ui->rsReconnectBtn, &QPushButton::pressed,
+        ui->rbxstudioStatus, &FindStatusDisplay::research,
         this, &MainWindow::refreshRbxStudio
     );
 }
@@ -77,14 +77,13 @@ void MainWindow::initRichPresence() {
     richPresence = new RichPresence(this);
 
     const discord::Result error = richPresence->coreError;
+    ui->dscStatus->setFound(error!=discord::Result::InternalError);
     if (error == discord::Result::Ok) {
-        ui->dscFound->setText("Discord found!");
         richPresence->start();
     } else {
         switch (error) {
 
             case discord::Result::InternalError:
-                ui->dscFound->setText("Discord not found!");
                 break;
 
             default:
@@ -103,7 +102,7 @@ void MainWindow::initRichPresence() {
                 };
 
                 QMessageBox::critical(
-                    nullptr,
+                    this,
                     "Discord RPC",
                     msg,
                     "Ok"
@@ -111,11 +110,6 @@ void MainWindow::initRichPresence() {
                 break;
         }
     }
-}
-
-bool MainWindow::setRbxStudioFound(const bool val) {
-    rbxStudioFound = val;
-    return rbxStudioFound;
 }
 
 bool MainWindow::refreshRbxStudio() {
@@ -138,7 +132,7 @@ bool MainWindow::refreshRbxStudio() {
     }
 
     CloseHandle(snapshot);
-    ui->rbxstudioFound->setText(rbxStudioFound ? "Roblox Studio found!" : "Roblox Studio not found!");
+    ui->rbxstudioStatus->setFound(rbxStudioFound);
     return rbxStudioFound;
 
     /*

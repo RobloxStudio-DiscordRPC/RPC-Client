@@ -6,6 +6,7 @@
 #include <classes/listener.h>
 #include <classes/systemtrayicon.h>
 #include <classes/richpresence.h>
+#include <classes/findstatusdisplay.h>
 
 #ifdef _WIN32
     #include <windows.h>
@@ -39,8 +40,6 @@ class MainWindow : public QMainWindow
 
         void initServer();
         void initRichPresence();
-
-        bool setRbxStudioFound(const bool val);
 
         private slots:
             void loadParams(QJsonObject params);

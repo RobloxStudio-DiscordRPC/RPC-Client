@@ -2,4 +2,8 @@
     <qresource prefix="/">
         <file>app.png</file>
     </qresource>
+    <qresource prefix="/icons">
+        <file>cross.png</file>
+        <file>tick.png</file>
+    </qresource>
 </RCC>

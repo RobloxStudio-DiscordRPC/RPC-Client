@@ -41,20 +41,7 @@
            <item row="0" column="0">
             <widget class="QLabel" name="dscFound">
              <property name="text">
-              <string>Discord not found!</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="1">
-            <widget class="QPushButton" name="dscReconnectBtn">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>Search again</string>
+              <string>Discord:</string>
              </property>
             </widget>
            </item>
@@ -64,22 +51,15 @@
               <enum>Qt::LeftToRight</enum>
              </property>
              <property name="text">
-              <string>Roblox Studio not found!</string>
+              <string>Roblox Studio:</string>
              </property>
             </widget>
            </item>
+           <item row="0" column="1">
+            <widget class="FindStatusDisplay" name="dscStatus" native="true"/>
+           </item>
            <item row="1" column="1">
-            <widget class="QPushButton" name="rsReconnectBtn">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>Search again</string>
-             </property>
-            </widget>
+            <widget class="FindStatusDisplay" name="rbxstudioStatus" native="true"/>
            </item>
           </layout>
          </widget>
@@ -250,6 +230,14 @@
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>FindStatusDisplay</class>
+   <extends>QWidget</extends>
+   <header>findstatusdisplay.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="../assets/assets.qrc"/>
  </resources>
