@@ -2,10 +2,16 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QProcess>
 #include <classes/listener.h>
 #include <classes/systemtrayicon.h>
 #include <classes/richpresence.h>
-#include <sstream>
+
+#ifdef _WIN32
+    #include <windows.h>
+    #include <tlhelp32.h>
+    #include <tchar.h>
+#endif
 
 #define safedelete(x) {if ((x)!=NULL) {delete (x); (x)=NULL;}}
 
@@ -21,6 +27,9 @@ class MainWindow : public QMainWindow
         MainWindow(QWidget *parent = nullptr);
         ~MainWindow();
 
+        bool rbxStudioFound;
+        bool refreshRbxStudio();
+
     private:
         Ui::MainWindow *ui;
 
@@ -30,6 +39,8 @@ class MainWindow : public QMainWindow
 
         void initServer();
         void initRichPresence();
+
+        bool setRbxStudioFound(const bool val);
 
         private slots:
             void loadParams(QJsonObject params);

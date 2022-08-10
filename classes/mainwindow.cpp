@@ -26,6 +26,12 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent) {
         ui->dscReconnectBtn, &QPushButton::pressed,
         this, &MainWindow::initRichPresence
     );
+
+    refreshRbxStudio();
+    connect(
+        ui->rsReconnectBtn, &QPushButton::pressed,
+        this, &MainWindow::refreshRbxStudio
+    );
 }
 
 MainWindow::~MainWindow() {
@@ -105,4 +111,43 @@ void MainWindow::initRichPresence() {
                 break;
         }
     }
+}
+
+bool MainWindow::setRbxStudioFound(const bool val) {
+    rbxStudioFound = val;
+    return rbxStudioFound;
+}
+
+bool MainWindow::refreshRbxStudio() {
+    const QString process = "RobloxStudioBeta.exe";
+
+    PROCESSENTRY32 entry;
+    entry.dwSize = sizeof(PROCESSENTRY32);
+
+    rbxStudioFound = false;
+
+    const HANDLE snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, NULL);
+
+    if (Process32First(snapshot, &entry)) {
+        do {
+            if (!_tcsicmp(entry.szExeFile, process.toStdWString().c_str())) {
+                rbxStudioFound = true;
+                break;
+            }
+        } while (Process32Next(snapshot, &entry));
+    }
+
+    CloseHandle(snapshot);
+    ui->rbxstudioFound->setText(rbxStudioFound ? "Roblox Studio found!" : "Roblox Studio not found!");
+    return rbxStudioFound;
+
+    /*
+    QProcess rbxStudio(this);
+    rbxStudio.setProgram("RobloxStudioBeta.exe");
+
+    rbxStudioFound = rbxStudio.state() != QProcess::NotRunning;
+    ui->rbxstudioFound->setText(rbxStudioFound ? "Roblox Studio found!" : "Roblox Studio not found!");
+
+    //delete rbxStudio;
+    */
 }

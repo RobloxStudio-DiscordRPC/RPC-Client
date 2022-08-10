@@ -54,7 +54,7 @@
               </sizepolicy>
              </property>
              <property name="text">
-              <string>Refresh</string>
+              <string>Search again</string>
              </property>
             </widget>
            </item>
@@ -77,7 +77,7 @@
               </sizepolicy>
              </property>
              <property name="text">
-              <string>Refresh</string>
+              <string>Search again</string>
              </property>
             </widget>
            </item>
