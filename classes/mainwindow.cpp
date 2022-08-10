@@ -32,6 +32,12 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent) {
         ui->rbxstudioStatus, &FindStatusDisplay::research,
         this, &MainWindow::refreshRbxStudio
     );
+
+    setStartOnLogin(QFile::exists(getLoginLaunchLnkPath()));
+    connect(
+        ui->launchOnLoginCheck, &QCheckBox::toggled,
+        this, &MainWindow::setStartOnLogin
+    );
 }
 
 MainWindow::~MainWindow() {
@@ -145,3 +151,33 @@ bool MainWindow::refreshRbxStudio() {
     //delete rbxStudio;
     */
 }
+
+QString MainWindow::getLoginLaunchLnkPath() {
+    QFileInfo fileInfo(QCoreApplication::applicationFilePath());
+    return (
+        QStandardPaths::standardLocations(QStandardPaths::ApplicationsLocation).first() +
+        QDir::separator() +
+        "Startup" +
+        QDir::separator() +
+        fileInfo.completeBaseName() +
+        ".lnk"
+    );
+}
+
+void MainWindow::setStartOnLogin(bool s) {
+    ui->launchOnLoginCheck->setChecked(s);
+    emit startOnLoginChanged();
+
+    QString lnk = getLoginLaunchLnkPath();
+
+    if (s) {
+        QFile::link(
+            QCoreApplication::applicationFilePath(),
+            lnk
+        );
+    } else {
+        QFile::remove(lnk);
+    }
+}
+
+bool MainWindow::startOnLogin() {return ui->launchOnLoginCheck->isChecked();}

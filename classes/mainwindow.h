@@ -7,6 +7,9 @@
 #include <classes/systemtrayicon.h>
 #include <classes/richpresence.h>
 #include <classes/findstatusdisplay.h>
+#include <QFileInfo>
+#include <QDir>
+#include <QStandardPaths>
 
 #ifdef _WIN32
     #include <windows.h>
@@ -24,12 +27,22 @@ class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
+    Q_PROPERTY(bool startOnLogin READ startOnLogin WRITE setStartOnLogin NOTIFY startOnLoginChanged)
+
     public:
         MainWindow(QWidget *parent = nullptr);
         ~MainWindow();
 
         bool rbxStudioFound;
-        bool refreshRbxStudio();
+
+        bool startOnLogin();
+
+        signals:
+            void startOnLoginChanged();
+
+        public slots:
+            bool refreshRbxStudio();
+            void setStartOnLogin(bool s);
 
     private:
         Ui::MainWindow *ui;
@@ -40,6 +53,8 @@ class MainWindow : public QMainWindow
 
         void initServer();
         void initRichPresence();
+
+        QString getLoginLaunchLnkPath();
 
         private slots:
             void loadParams(QJsonObject params);
