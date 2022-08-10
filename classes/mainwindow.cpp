@@ -15,12 +15,10 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent) {
 
     initRichPresence();
 
-    /*
     connect(
         ui->exitBtn, &QPushButton::pressed,
-        QApplication::instance(), &QCoreApplication::exit
+        this, &MainWindow::close
     );
-    */
 
     connect(
         ui->dscStatus, &FindStatusDisplay::research,
