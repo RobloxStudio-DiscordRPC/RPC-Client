@@ -1,5 +1,6 @@
 :: Creates folder with DLL files
 :: in order to get app ready to release
+@echo off
 
 pushd %1
     set buildDir=%CD%
