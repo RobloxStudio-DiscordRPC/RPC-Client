@@ -77,3 +77,4 @@ Thumbs.db
 
 # Libraries or just things that take up space
 libs/*
+dist/deploy*
