@@ -3,6 +3,14 @@
 SystemTrayIcon::SystemTrayIcon(): QSystemTrayIcon() {
     setIcon(QIcon(":/app.png"));
     initMenus();
+    connect(
+        this, &SystemTrayIcon::activated,
+        openWindow, [this](const SystemTrayIcon::ActivationReason reason){
+            if (reason == SystemTrayIcon::Trigger) {
+                openWindow->trigger();
+            }
+        }
+    );
 }
 
 void SystemTrayIcon::initMenus() {
@@ -10,6 +18,7 @@ void SystemTrayIcon::initMenus() {
 
     openWindow = new QAction("Open window", menu);
     menu->addAction(openWindow);
+    menu->setDefaultAction(openWindow);
 
     about = new QAction("About", menu);
     menu->addAction(about);
