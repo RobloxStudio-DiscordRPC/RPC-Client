@@ -1,9 +1,10 @@
 #ifndef SYSTEMTRAYICON_H
 #define SYSTEMTRAYICON_H
 
+#include <QApplication>
 #include <QSystemTrayIcon>
 #include <QStyle>
-#include <QApplication>
+#include <QMenu>
 
 class SystemTrayIcon : public QSystemTrayIcon {
     Q_OBJECT
@@ -11,8 +12,17 @@ class SystemTrayIcon : public QSystemTrayIcon {
     public:
         SystemTrayIcon();
 
+        QMenu* menu;
+        QAction* openWindow;
+        QAction* about;
+        QAction* quit;
+
+        inline void quitApp() {
+            QApplication::quit();
+        };
+
     private:
-        QApplication* app;
+        void initMenus();
 };
 
 #endif // SYSTEMTRAYICON_H

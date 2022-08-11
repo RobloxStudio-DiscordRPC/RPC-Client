@@ -9,7 +9,22 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent) {
 
     trayicon = new SystemTrayIcon;
     trayicon->show();
-    trayicon->showMessage("hello","start listening!",trayicon->icon());
+    connect(
+        trayicon->openWindow, &QAction::triggered,
+        this, [this](){
+            show();
+            setWindowState(windowState() & ~Qt::WindowMinimized | Qt::WindowActive);
+            ui->tabs->setCurrentIndex(0);
+        }
+    );
+    connect(
+        trayicon->about, &QAction::triggered,
+        this, [this](){
+            show();
+            setWindowState(windowState() & ~Qt::WindowMinimized | Qt::WindowActive);
+            ui->tabs->setCurrentIndex(2);
+        }
+    );
 
     initServer();
 
@@ -17,7 +32,7 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent) {
 
     connect(
         ui->exitBtn, &QPushButton::pressed,
-        this, &MainWindow::close
+        trayicon, &SystemTrayIcon::quitApp
     );
 
     connect(
@@ -31,7 +46,7 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent) {
         this, &MainWindow::refreshRbxStudio
     );
 
-    setStartOnLogin(QFile::exists(getLoginLaunchLnkPath()));
+    ui->launchOnLoginCheck->setChecked(QFile::exists(getLoginLaunchLnkPath()));
     connect(
         ui->launchOnLoginCheck, &QCheckBox::toggled,
         this, &MainWindow::setStartOnLogin
@@ -42,6 +57,17 @@ MainWindow::~MainWindow() {
     safedelete(server);
     safedelete(trayicon);
     safedelete(ui);
+}
+
+void MainWindow::closeEvent(QCloseEvent* event) {
+    if (false) { // for later
+        event->accept();
+        return;
+    }
+
+    event->ignore();
+
+    hide();
 }
 
 void MainWindow::initServer() {

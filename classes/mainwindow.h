@@ -10,6 +10,7 @@
 #include <QFileInfo>
 #include <QDir>
 #include <QStandardPaths>
+#include <QCloseEvent>
 
 #ifdef _WIN32
     #include <windows.h>
@@ -43,6 +44,9 @@ class MainWindow : public QMainWindow
         public slots:
             bool refreshRbxStudio();
             void setStartOnLogin(bool s);
+
+    protected:
+        void closeEvent(QCloseEvent* event);
 
     private:
         Ui::MainWindow *ui;
