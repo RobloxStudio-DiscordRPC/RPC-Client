@@ -23,6 +23,7 @@ class RichPresence : public QThread {
 
         discord::Result coreError;
         discord::Result  rpcError;
+        discord::Result pollError;
 
         void start();
         void stop ();
