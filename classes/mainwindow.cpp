@@ -190,6 +190,14 @@ bool MainWindow::refreshRbxStudio() {
 
     CloseHandle(snapshot);
     ui->rbxstudioStatus->setFound(rbxStudioFound);
+
+    if (rbxStudioFound) {
+        if (!richPresence->isRunning()) richPresence->start();
+    } else {
+        richPresence->stop();
+        richPresence->wait();
+    }
+
     return rbxStudioFound;
 
     /*
