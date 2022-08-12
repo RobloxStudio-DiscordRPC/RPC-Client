@@ -21,10 +21,11 @@
    <layout class="QGridLayout" name="gridLayout">
     <item row="0" column="0">
      <widget class="QTabWidget" name="tabs">
-      <property name="currentIndex">
-       <number>0</number>
-      </property>
       <widget class="QWidget" name="homeTab">
+       <attribute name="icon">
+        <iconset resource="../assets/assets.qrc">
+         <normaloff>:/icons/home.png</normaloff>:/icons/home.png</iconset>
+       </attribute>
        <attribute name="title">
         <string>Home</string>
        </attribute>
@@ -67,6 +68,10 @@
        </layout>
       </widget>
       <widget class="QWidget" name="settingsTab">
+       <attribute name="icon">
+        <iconset resource="../assets/assets.qrc">
+         <normaloff>:/icons/gear.png</normaloff>:/icons/gear.png</iconset>
+       </attribute>
        <attribute name="title">
         <string>Settings</string>
        </attribute>
@@ -111,6 +116,10 @@
        </layout>
       </widget>
       <widget class="QWidget" name="abtTab">
+       <attribute name="icon">
+        <iconset resource="../assets/assets.qrc">
+         <normaloff>:/icons/information.png</normaloff>:/icons/information.png</iconset>
+       </attribute>
        <attribute name="title">
         <string>About</string>
        </attribute>

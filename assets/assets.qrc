@@ -5,5 +5,8 @@
     <qresource prefix="/icons">
         <file>cross.png</file>
         <file>tick.png</file>
+        <file>gear.png</file>
+        <file>home.png</file>
+        <file>information.png</file>
     </qresource>
 </RCC>
