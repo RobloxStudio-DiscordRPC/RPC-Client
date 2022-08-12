@@ -30,6 +30,10 @@ UI_DIR = ./interface
 
 RESOURCES = assets/assets.qrc
 
+win32 {
+    RC_FILE = assets/app.rc
+}
+
 # libraries
 
 ## httplib and possibly others
