@@ -26,6 +26,8 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent) {
         }
     );
 
+    initSettings();
+
     initServer();
 
     initRichPresence();
@@ -51,6 +53,11 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent) {
         ui->launchOnLoginCheck, &QCheckBox::toggled,
         this, &MainWindow::setStartOnLogin
     );
+
+    connect(
+        QApplication::instance(), &QCoreApplication::aboutToQuit,
+        settings, &Settings::write
+    );
 }
 
 MainWindow::~MainWindow() {
@@ -60,7 +67,7 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::closeEvent(QCloseEvent* event) {
-    if (false) { // for later
+    if (settings->get("EXIT_ON_CLOSE").toBool()) {
         event->accept();
         return;
     }
@@ -140,6 +147,26 @@ void MainWindow::initRichPresence() {
                 break;
         }
     }
+}
+
+QFileInfo MainWindow::getExecutableInfo() {
+    return QFileInfo(QCoreApplication::applicationFilePath());
+}
+
+void MainWindow::initSettings() {
+    settings = new Settings(new QFile(
+        getExecutableInfo().absolutePath() +
+        QDir::separator() +
+        "rsdrpc_config.json"
+    ));
+
+    ui->closeExitCheck->setChecked(settings->get("EXIT_ON_CLOSE").toBool());
+    connect(
+        ui->closeExitCheck, &QCheckBox::toggled,
+        this, [this](const bool exitOnClose){
+            settings->set("EXIT_ON_CLOSE", exitOnClose);
+        }
+    );
 }
 
 bool MainWindow::refreshRbxStudio() {

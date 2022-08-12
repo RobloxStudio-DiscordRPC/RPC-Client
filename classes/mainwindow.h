@@ -7,6 +7,7 @@
 #include <classes/systemtrayicon.h>
 #include <classes/richpresence.h>
 #include <classes/findstatusdisplay.h>
+#include <classes/settings.h>
 #include <QFileInfo>
 #include <QDir>
 #include <QStandardPaths>
@@ -34,6 +35,8 @@ class MainWindow : public QMainWindow
         MainWindow(QWidget *parent = nullptr);
         ~MainWindow();
 
+        Settings* settings;
+
         bool rbxStudioFound;
 
         bool startOnLogin();
@@ -57,8 +60,11 @@ class MainWindow : public QMainWindow
 
         void initServer();
         void initRichPresence();
+        void initSettings();
 
         QString getLoginLaunchLnkPath();
+
+        static QFileInfo getExecutableInfo();
 
         private slots:
             void loadParams(QJsonObject params);
