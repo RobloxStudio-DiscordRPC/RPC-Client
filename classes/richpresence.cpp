@@ -74,11 +74,12 @@ void RichPresence::initDiscord() {
 
 void RichPresence::initActivity() {
     activity = new Activity{};
-    activity->SetDetails("Working on: X");
-    activity->SetState("Editing script: Y");
+    activity->SetDetails("Idling");
+    //activity->SetState("");
     activity->GetAssets().SetLargeImage("rbxstudio");
     activity->GetAssets().SetLargeText("Roblox Studio");
     activity->SetType(ActivityType::Playing);
+    activity->GetTimestamps().SetStart(QDateTime::currentMSecsSinceEpoch());
 
     updateActivity();
 }

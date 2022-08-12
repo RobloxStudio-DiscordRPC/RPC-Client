@@ -6,6 +6,7 @@
 #include <QMessageBox>
 #include <QCoreApplication>
 #include <QTimer>
+#include <QDateTime>
 
 using namespace discord;
 
