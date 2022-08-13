@@ -24,7 +24,7 @@ class RichPresence : public QThread {
 
         discord::Result coreError;
         discord::Result  rpcError;
-        discord::Result pollError;
+        volatile discord::Result pollError;
 
         void start();
         void stop ();
@@ -40,6 +40,7 @@ class RichPresence : public QThread {
 
         Core* discordCore;
         void initDiscord();
+        void deinitDiscord();
 
         ActivityManager* manager;
         void initActivity();

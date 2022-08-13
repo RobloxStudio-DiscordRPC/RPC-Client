@@ -2,20 +2,16 @@
 #include <thread>
 
 RichPresence::RichPresence(QObject *parent): QThread{parent} {
-    initDiscord();
-
-    if (coreError==Result::Ok) {
-        initActivity();
-    }
+    initActivity();
 }
 
 RichPresence::~RichPresence() {
     if (isRunning()) {
         stop();
-        wait();
+        // note: stop() deinits discord core
     }
 
-    delete discordCore;
+    delete activity;
 }
 
 void RichPresence::errorMsg(const QString msg, const Result errCode) {
@@ -42,6 +38,12 @@ void RichPresence::errorMsg(const QString msg, const Result errCode) {
     //QCoreApplication::instance()->quit();
 }
 
+void RichPresence::deinitDiscord() {
+    delete discordCore;
+    discordCore = NULL;
+    manager = NULL;
+}
+
 void RichPresence::initDiscord() {
     Core* core{};
     discordCore = core;
@@ -64,11 +66,7 @@ void RichPresence::initDiscord() {
     if (resp == Result::Ok) {
         manager = &discordCore->ActivityManager();
     } else {
-        activity = NULL;
-
-        delete discordCore;
-        discordCore = NULL;
-        manager = NULL;
+        deinitDiscord();
     }
 }
 
@@ -80,8 +78,6 @@ void RichPresence::initActivity() {
     activity->GetAssets().SetLargeText("Roblox Studio");
     activity->SetType(ActivityType::Playing);
     activity->GetTimestamps().SetStart(QDateTime::currentMSecsSinceEpoch());
-
-    updateActivity();
 }
 
 void RichPresence::updateActivity() {
@@ -92,19 +88,40 @@ void RichPresence::updateActivity() {
 }
 
 void RichPresence::start() {
+    initDiscord();
+    if (coreError != Result::Ok) return;
+    updateActivity();
+
     isStopped = false;
     QThread::start();
+
     setPriority(Priority::IdlePriority);
 }
 
 void RichPresence::run() {
-    do {
+    updateActivity();
+
+    while (!isStopped || pollError == Result::Ok) {
         pollError = discordCore->RunCallbacks();
-        QThread::msleep(16);
-        //std::this_thread::sleep_for(std::chrono::milliseconds(16));
-    } while (!isStopped);
+        qDebug() << "callbacks" << (int) pollError;
+        QThread::msleep(200);
+    }
+
+    qDebug() << "no callbacks";
 }
 
 void RichPresence::stop() {
     isStopped = true;
+
+    // if is running wait until it finishes
+    if (isRunning()) {
+        QEventLoop waiter(this);
+        connect(
+            this, &RichPresence::finished,
+            &waiter, &QEventLoop::quit
+        );
+        waiter.exec();
+    }
+
+    deinitDiscord();
 }

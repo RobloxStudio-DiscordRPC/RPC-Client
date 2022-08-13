@@ -193,28 +193,18 @@ bool MainWindow::refreshRbxStudio() {
 
     if (rbxStudioFound) {
         if (!richPresence->isRunning()) richPresence->start();
-    } else {
+    } else if (richPresence->isRunning()) {
         richPresence->stop();
-        richPresence->wait();
     }
 
     return rbxStudioFound;
-
-    /*
-    QProcess rbxStudio(this);
-    rbxStudio.setProgram("RobloxStudioBeta.exe");
-
-    rbxStudioFound = rbxStudio.state() != QProcess::NotRunning;
-    ui->rbxstudioFound->setText(rbxStudioFound ? "Roblox Studio found!" : "Roblox Studio not found!");
-
-    //delete rbxStudio;
-    */
 }
 
 QString MainWindow::getLoginLaunchLnkPath() {
     QFileInfo fileInfo(QCoreApplication::applicationFilePath());
+    QStringList appdata = QStandardPaths::standardLocations(QStandardPaths::ApplicationsLocation);
     return (
-        QStandardPaths::standardLocations(QStandardPaths::ApplicationsLocation).first() +
+        appdata.first() +
         QDir::separator() +
         "Startup" +
         QDir::separator() +
