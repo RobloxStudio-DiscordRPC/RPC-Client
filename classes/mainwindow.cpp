@@ -62,7 +62,10 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent) {
 
 MainWindow::~MainWindow() {
     safedelete(server);
+    safedelete(settings);
+    trayicon->hide();
     safedelete(trayicon);
+    safedelete(richPresence);
     safedelete(ui);
 }
 
@@ -113,40 +116,56 @@ void MainWindow::initRichPresence() {
     }
     richPresence = new RichPresence(this);
 
+    richPresence->initDiscord();
+    if (refreshRbxStudio()) richPresence->start();
+    refreshDiscord();
+
     const discord::Result error = richPresence->coreError;
-    ui->dscStatus->setFound(error!=discord::Result::InternalError);
-    if (error == discord::Result::Ok) {
-        richPresence->start();
-    } else {
-        switch (error) {
+    switch (error) {
+        case discord::Result::Ok:
+            qDebug("ok");
+            connect(
+                richPresence, &RichPresence::finished,
+                this, &MainWindow::refreshDiscord
+            );
+            break;
 
-            case discord::Result::InternalError:
+        case discord::Result::InternalError:
+            qDebug("case");
+            break;
+
+        default:
+            qDebug("def");
+            const int code = (int) error;
+            const QString msg = "An error has occured! Error code: "+QString::number(code);
+
+            /*
+            if error code is invalid (is invalid enum)
+            then don't show an error message and instead print warning
+
+            43 because that's where the discord::Result enum ends
+            */
+            if ((code < 0) || (code > 43)) {
+                qWarning() << msg;
                 break;
+            };
 
-            default:
-                const int code = (int) error;
-                const QString msg = "An error has occured! Error code: "+QString::number(code);
-
-                /*
-                if error code is invalid (is invalid enum)
-                then don't show an error message and instead print warning
-
-                43 because that's where the discord::Result enum ends
-                */
-                if ((code < 0) || (code > 43)) {
-                    qWarning() << msg;
-                    break;
-                };
-
-                QMessageBox::critical(
-                    this,
-                    "Discord RPC",
-                    msg,
-                    "Ok"
-                );
-                break;
-        }
+            QMessageBox::critical(
+                this,
+                "Discord RPC",
+                msg,
+                "Ok"
+            );
+            break;
     }
+}
+
+void MainWindow::refreshDiscord() {
+    ui->dscStatus->setFound(
+        richPresence->coreError == discord::Result::Ok &&
+        richPresence->rpcError  == discord::Result::Ok &&
+        richPresence->pollError == discord::Result::Ok
+    );
 }
 
 QFileInfo MainWindow::getExecutableInfo() {
@@ -191,9 +210,10 @@ bool MainWindow::refreshRbxStudio() {
     CloseHandle(snapshot);
     ui->rbxstudioStatus->setFound(rbxStudioFound);
 
+    const bool running = richPresence->isRunning();
     if (rbxStudioFound) {
-        if (!richPresence->isRunning()) richPresence->start();
-    } else if (richPresence->isRunning()) {
+        if (!running) richPresence->start();
+    } else if (running) {
         richPresence->stop();
     }
 
@@ -201,7 +221,7 @@ bool MainWindow::refreshRbxStudio() {
 }
 
 QString MainWindow::getLoginLaunchLnkPath() {
-    QFileInfo fileInfo(QCoreApplication::applicationFilePath());
+    QFileInfo fileInfo = getExecutableInfo();
     QStringList appdata = QStandardPaths::standardLocations(QStandardPaths::ApplicationsLocation);
     return (
         appdata.first() +

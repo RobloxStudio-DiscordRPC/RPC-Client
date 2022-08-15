@@ -29,6 +29,9 @@ class RichPresence : public QThread {
         void start();
         void stop ();
 
+        void initDiscord();
+        void deinitDiscord();
+
     protected:
         void run();
 
@@ -39,8 +42,6 @@ class RichPresence : public QThread {
         );
 
         Core* discordCore;
-        void initDiscord();
-        void deinitDiscord();
 
         ActivityManager* manager;
         void initActivity();

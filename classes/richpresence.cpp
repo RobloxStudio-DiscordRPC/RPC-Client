@@ -2,6 +2,10 @@
 #include <thread>
 
 RichPresence::RichPresence(QObject *parent): QThread{parent} {
+    coreError = Result::Ok;
+    pollError = Result::Ok;
+    rpcError  = Result::Ok;
+
     initActivity();
 }
 
@@ -88,11 +92,14 @@ void RichPresence::updateActivity() {
 }
 
 void RichPresence::start() {
-    initDiscord();
-    if (coreError != Result::Ok) return;
-    updateActivity();
+    if (discordCore == NULL) {
+        initDiscord();
+        if (coreError != Result::Ok) return;
+        updateActivity();
+    }
 
     isStopped = false;
+    pollError = Result::Ok;
     QThread::start();
 
     setPriority(Priority::IdlePriority);
@@ -101,9 +108,16 @@ void RichPresence::start() {
 void RichPresence::run() {
     updateActivity();
 
-    while (!isStopped || pollError == Result::Ok) {
+    while (!isStopped) {
+        if (pollError != Result::Ok) {
+            isStopped = true;
+            break;
+        }
+
         pollError = discordCore->RunCallbacks();
+
         qDebug() << "callbacks" << (int) pollError;
+
         QThread::msleep(200);
     }
 
@@ -123,5 +137,5 @@ void RichPresence::stop() {
         waiter.exec();
     }
 
-    deinitDiscord();
+    if (discordCore != NULL) deinitDiscord();
 }

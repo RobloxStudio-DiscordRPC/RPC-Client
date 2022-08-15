@@ -45,6 +45,7 @@ class MainWindow : public QMainWindow
             void startOnLoginChanged();
 
         public slots:
+            void refreshDiscord();
             bool refreshRbxStudio();
             void setStartOnLogin(bool s);
 
