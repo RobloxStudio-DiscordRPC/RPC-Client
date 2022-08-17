@@ -8,16 +8,11 @@
 #include <classes/richpresence.h>
 #include <classes/findstatusdisplay.h>
 #include <classes/settings.h>
+#include <classes/processtracker.h>
 #include <QFileInfo>
 #include <QDir>
 #include <QStandardPaths>
 #include <QCloseEvent>
-
-#ifdef _WIN32
-    #include <windows.h>
-    #include <tlhelp32.h>
-    #include <tchar.h>
-#endif
 
 #define safedelete(x) {if ((x)!=NULL) {delete (x); (x)=NULL;}}
 
@@ -58,10 +53,12 @@ class MainWindow : public QMainWindow
         SystemTrayIcon* trayicon;
         Listener* server;
         RichPresence* richPresence;
+        ProcessTracker* rbxStudioTracker;
 
         void initServer();
         void initRichPresence();
         void initSettings();
+        void initRbxStudioTracker();
 
         QString getLoginLaunchLnkPath();
 

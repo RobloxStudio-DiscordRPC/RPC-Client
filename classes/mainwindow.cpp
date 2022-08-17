@@ -42,6 +42,7 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent) {
         this, &MainWindow::initRichPresence
     );
 
+    initRbxStudioTracker();
     refreshRbxStudio();
     connect(
         ui->rbxstudioStatus, &FindStatusDisplay::research,
@@ -66,6 +67,7 @@ MainWindow::~MainWindow() {
     trayicon->hide();
     safedelete(trayicon);
     safedelete(richPresence);
+    safedelete(rbxStudioTracker);
     safedelete(ui);
 }
 
@@ -117,7 +119,7 @@ void MainWindow::initRichPresence() {
     richPresence = new RichPresence(this);
 
     richPresence->initDiscord();
-    if (refreshRbxStudio()) richPresence->start();
+    //if (rbxStudioTracker->isRunning()) richPresence->start();
     refreshDiscord();
 
     const discord::Result error = richPresence->coreError;
@@ -188,7 +190,13 @@ void MainWindow::initSettings() {
     );
 }
 
+void MainWindow::initRbxStudioTracker() {
+    rbxStudioTracker = new ProcessTracker("RobloxStudioBeta.exe", this);
+    rbxStudioTracker->start();
+}
+
 bool MainWindow::refreshRbxStudio() {
+    /*
     const QString process = "RobloxStudioBeta.exe";
 
     PROCESSENTRY32 entry;
@@ -211,13 +219,17 @@ bool MainWindow::refreshRbxStudio() {
     ui->rbxstudioStatus->setFound(rbxStudioFound);
 
     const bool running = richPresence->isRunning();
-    if (rbxStudioFound) {
+    */
+
+    const bool running = rbxStudioTracker->isRunning();
+    ui->rbxstudioStatus->setFound(running);
+    if (running) {
         if (!running) richPresence->start();
     } else if (running) {
         richPresence->stop();
     }
 
-    return rbxStudioFound;
+    return running;
 }
 
 QString MainWindow::getLoginLaunchLnkPath() {
