@@ -8,9 +8,13 @@
     #include <windows.h>
     #include <tlhelp32.h>
     #include <tchar.h>
+    #include <functional>
 
-    #define PID_NOT_FOUND 0
+    #define PID_NOT_FOUND -1
 #endif
+
+typedef tagPROCESSENTRY32W Process;
+typedef std::function<bool(Process)> ProcessLoop;
 
 class ProcessTracker : public QThread {
     Q_OBJECT
@@ -21,6 +25,7 @@ class ProcessTracker : public QThread {
         QString pName;
         int pPid;
         void refreshPid();
+        bool isProcessRunning();
 
         static int getPidByName(const QString pname);
 
@@ -34,6 +39,9 @@ class ProcessTracker : public QThread {
 
     private:
         HANDLE pHandle;
+        bool waiting;
+
+        static void loopThroughProcesses(ProcessLoop callback);
 };
 
 #endif // PROCESSTRACKER_H
