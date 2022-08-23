@@ -10,6 +10,7 @@ class Settings : public QObject, public QJsonDocument {
 
     public:
         Settings(QFile* f);
+        ~Settings();
         QFile* file;
 
         static inline int configVersion  = 1;

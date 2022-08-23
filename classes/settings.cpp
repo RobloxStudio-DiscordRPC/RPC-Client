@@ -23,6 +23,11 @@ void Settings::setFile(QFile* json) {
     file = json;
 }
 
+Settings::~Settings() {
+    write();
+    delete file;
+}
+
 void Settings::fillAbout() {
     QJsonObject obj = object();
 
