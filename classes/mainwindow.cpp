@@ -221,7 +221,7 @@ bool MainWindow::refreshRbxStudio() {
     const bool running = richPresence->isRunning();
     */
 
-    const bool running = rbxStudioTracker->isRunning();
+    const bool running = rbxStudioTracker->isProcessRunning();
     ui->rbxstudioStatus->setFound(running);
     if (running) {
         if (!running) richPresence->start();

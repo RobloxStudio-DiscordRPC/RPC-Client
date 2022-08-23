@@ -20,7 +20,7 @@ void ProcessTracker::loopThroughProcesses(ProcessLoop callback) {
 
         do {
             loopBreak = callback(entry);
-        } while (Process32Next(snapshot, &entry) || (!loopBreak));
+        } while (Process32Next(snapshot, &entry) && (!loopBreak));
     }
 
     CloseHandle(snapshot);
@@ -64,6 +64,11 @@ bool ProcessTracker::isProcessRunning() {
 
     bool running = false;
 
+    loopThroughProcesses([this, &running](Process process) {
+        if (process.th32ProcessID == pPid) running = true;
+        return running;
+    });
+
     return running;
 }
 
@@ -77,7 +82,7 @@ void ProcessTracker::run() {
     if (pHandle != NULL) {
 
         waiting = true;
-        WaitForSingleObject(pHandle, 0);
+        WaitForSingleObject(pHandle, INFINITE);
         waiting = false;
 
         CloseHandle(pHandle);
