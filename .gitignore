@@ -73,6 +73,9 @@ Thumbs.db
 *.dll
 *.exe
 
-# Libraries or just things that take up space
+# Libraries
 libs/*
-dist/deploy*
+
+# Generated releases
+*.zip
+dist/*-*
