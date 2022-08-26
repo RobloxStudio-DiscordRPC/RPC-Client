@@ -3,6 +3,7 @@
 
 #include <QThread>
 #include <QtDebug>
+#include <QEventLoop>
 
 #ifdef _WIN32
     #include <windows.h>
@@ -13,23 +14,31 @@
     #define PID_NOT_FOUND -1
 #endif
 
-typedef tagPROCESSENTRY32W Process;
-typedef std::function<bool(Process)> ProcessLoop;
+struct Process {
+    QString name;
+    int pid = PID_NOT_FOUND;
+    bool running = false;
+    HANDLE handle = NULL;
+};
+
+typedef tagPROCESSENTRY32W ProcessInfo;
+typedef std::function<bool(ProcessInfo)> ProcessLoop;
 
 class ProcessTracker : public QThread {
     Q_OBJECT
 
     public:
         explicit ProcessTracker(QString pname, QObject *parent = nullptr);
+        ~ProcessTracker();
 
-        QString pName;
-        int pPid;
+        Process proc;
         void refreshPid();
         bool isProcessRunning();
 
         static int getPidByName(const QString pname);
 
         void start();
+        void stop();
 
         signals:
             void stateChanged(bool isRunning);
@@ -38,8 +47,7 @@ class ProcessTracker : public QThread {
         void run();
 
     private:
-        HANDLE pHandle;
-        bool waiting = false;
+        bool looping = false;
 
         static void loopThroughProcesses(ProcessLoop callback);
 };

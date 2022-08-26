@@ -14,7 +14,12 @@
 #include <QStandardPaths>
 #include <QCloseEvent>
 
-#define safedelete(x) {if ((x)!=NULL) {delete (x); (x)=NULL;}}
+#define safedelete(x) { \
+    if ((x)!=NULL) { \
+        delete (x); \
+        (x)=NULL; \
+    } \
+}
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -59,6 +64,8 @@ class MainWindow : public QMainWindow
         void initRichPresence();
         void initSettings();
         void initRbxStudioTracker();
+
+        void updateRobloxStudioStatus(const bool status);
 
         QString getLoginLaunchLnkPath();
 

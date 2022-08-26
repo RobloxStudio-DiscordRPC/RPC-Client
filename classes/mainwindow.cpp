@@ -48,6 +48,10 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent) {
         ui->rbxstudioStatus, &FindStatusDisplay::research,
         this, &MainWindow::refreshRbxStudio
     );
+    connect(
+        rbxStudioTracker, &ProcessTracker::stateChanged,
+        this, &MainWindow::updateRobloxStudioStatus
+    );
 
     ui->launchOnLoginCheck->setChecked(QFile::exists(getLoginLaunchLnkPath()));
     connect(
@@ -195,40 +199,18 @@ void MainWindow::initRbxStudioTracker() {
     rbxStudioTracker->start();
 }
 
-bool MainWindow::refreshRbxStudio() {
-    /*
-    const QString process = "RobloxStudioBeta.exe";
-
-    PROCESSENTRY32 entry;
-    entry.dwSize = sizeof(PROCESSENTRY32);
-
-    rbxStudioFound = false;
-
-    const HANDLE snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, NULL);
-
-    if (Process32First(snapshot, &entry)) {
-        do {
-            if (!_tcsicmp(entry.szExeFile, process.toStdWString().c_str())) {
-                rbxStudioFound = true;
-                break;
-            }
-        } while (Process32Next(snapshot, &entry));
-    }
-
-    CloseHandle(snapshot);
-    ui->rbxstudioStatus->setFound(rbxStudioFound);
-
-    const bool running = richPresence->isRunning();
-    */
-
-    const bool running = rbxStudioTracker->isProcessRunning();
-    ui->rbxstudioStatus->setFound(running);
-    if (running) {
-        if (!running) richPresence->start();
-    } else if (running) {
+void MainWindow::updateRobloxStudioStatus(const bool status) {
+    ui->rbxstudioStatus->setFound(status);
+    if (status) {
+        if (!status) richPresence->start();
+    } else if (status) {
         richPresence->stop();
     }
+}
 
+bool MainWindow::refreshRbxStudio() {
+    const bool running = rbxStudioTracker->isProcessRunning();
+    updateRobloxStudioStatus(running);
     return running;
 }
 

@@ -1,12 +1,16 @@
 #include "processtracker.h"
 
 ProcessTracker::ProcessTracker(QString pname, QObject *parent): QThread{parent} {
-    pName = pname;
+    proc.name = pname;
     refreshPid();
 }
 
+ProcessTracker::~ProcessTracker() {
+    if (isRunning()) stop();
+}
+
 void ProcessTracker::refreshPid() {
-    pPid = getPidByName(pName);
+    proc.pid = getPidByName(proc.name);
 }
 
 void ProcessTracker::loopThroughProcesses(ProcessLoop callback) {
@@ -29,27 +33,9 @@ void ProcessTracker::loopThroughProcesses(ProcessLoop callback) {
 int ProcessTracker::getPidByName(const QString name) {
     int pid = PID_NOT_FOUND;
 
-    /*
-    PROCESSENTRY32 entry;
-    entry.dwSize = sizeof(PROCESSENTRY32);
-
-    const HANDLE snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, NULL);
-
-    if (Process32First(snapshot, &entry)) {
-        do {
-            if (!_tcsicmp(entry.szExeFile, name.toStdWString().c_str())) {
-                pid = entry.th32ProcessID;
-                break;
-            }
-        } while (Process32Next(snapshot, &entry));
-    }
-
-    CloseHandle(snapshot);
-    */
-
-    loopThroughProcesses([&pid, name](Process process) -> bool {
-        if (!_tcsicmp(process.szExeFile, name.toStdWString().c_str())) {
-            pid = process.th32ProcessID;
+    loopThroughProcesses([&pid, name](ProcessInfo pi) -> bool {
+        if (!_tcsicmp(pi.szExeFile, name.toStdWString().c_str())) {
+            pid = pi.th32ProcessID;
             return true;
         }
 
@@ -60,12 +46,13 @@ int ProcessTracker::getPidByName(const QString name) {
 }
 
 bool ProcessTracker::isProcessRunning() {
-    if (isRunning() && waiting) return true;
+    // if tracking, return result of tracker
+    if (isRunning()) return proc.running;
 
     bool running = false;
 
-    loopThroughProcesses([this, &running](Process process) {
-        if (process.th32ProcessID == pPid) running = true;
+    loopThroughProcesses([this, &running](ProcessInfo pi) {
+        if (!_tcsicmp(pi.szExeFile, proc.name.toStdWString().c_str())) running = true;
         return running;
     });
 
@@ -78,16 +65,48 @@ void ProcessTracker::start() {
 }
 
 void ProcessTracker::run() {
-    pHandle = OpenProcess(SYNCHRONIZE, TRUE, pPid);
-    if (pHandle != NULL) {
+    refreshPid();
+    looping = true;
 
-        waiting = true;
-        WaitForSingleObject(pHandle, INFINITE);
-        waiting = false;
+    while (looping) {
+        proc.handle = OpenProcess(SYNCHRONIZE, FALSE, proc.pid);
 
-        CloseHandle(pHandle);
+        if (proc.handle != NULL) {
 
-    } else {
-        qDebug() << "could not init process handle, error code:" << QString::number(GetLastError()).toStdString().c_str();
+            proc.running = true;
+            emit stateChanged(proc.running);
+            WaitForSingleObject(proc.handle, INFINITE);
+
+            CloseHandle(proc.handle);
+
+        } else {
+            proc.pid = PID_NOT_FOUND;
+
+            proc.running = false;
+            emit stateChanged(proc.running);
+            while (looping) {
+                refreshPid();
+                if (proc.pid != PID_NOT_FOUND) break;
+                QThread::msleep(2000);
+            }
+        }
+    }
+}
+
+void ProcessTracker::stop() {
+    looping = false;
+    if (proc.running) {
+        // trick the event waiter, so that it can stop waiting
+        SetEvent(proc.handle);
+    }
+
+    // if is running wait until it finishes
+    if (isRunning()) {
+        QEventLoop waiter(this);
+        connect(
+            this, &ProcessTracker::finished,
+            &waiter, &QEventLoop::quit
+        );
+        waiter.exec();
     }
 }
