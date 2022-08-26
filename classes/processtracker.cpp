@@ -69,15 +69,20 @@ void ProcessTracker::run() {
     looping = true;
 
     while (looping) {
-        proc.handle = OpenProcess(SYNCHRONIZE, FALSE, proc.pid);
+        proc.handle = OpenProcess(SYNCHRONIZE, TRUE, proc.pid);
 
         if (proc.handle != NULL) {
 
             proc.running = true;
             emit stateChanged(proc.running);
-            WaitForSingleObject(proc.handle, INFINITE);
+            //WaitForSingleObject(proc.handle, INFINITE);
+            while (
+                looping &&
+                (WaitForSingleObject(proc.handle, EMPTY_TIMEOUT) == WAIT_OBJECT_0)
+            ) QThread::msleep(2000);
 
             CloseHandle(proc.handle);
+            proc.handle = NULL;
 
         } else {
             proc.pid = PID_NOT_FOUND;
@@ -95,10 +100,6 @@ void ProcessTracker::run() {
 
 void ProcessTracker::stop() {
     looping = false;
-    if (proc.running) {
-        // trick the event waiter, so that it can stop waiting
-        SetEvent(proc.handle);
-    }
 
     // if is running wait until it finishes
     if (isRunning()) {

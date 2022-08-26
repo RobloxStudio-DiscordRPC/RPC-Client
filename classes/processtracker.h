@@ -12,6 +12,7 @@
     #include <functional>
 
     #define PID_NOT_FOUND -1
+    #define EMPTY_TIMEOUT 0
 #endif
 
 struct Process {
