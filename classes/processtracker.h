@@ -12,7 +12,7 @@
     #include <functional>
 
     #define PID_NOT_FOUND -1
-    #define EMPTY_TIMEOUT 0
+    #define POLLING_INTERVAL 2000
 #endif
 
 struct Process {

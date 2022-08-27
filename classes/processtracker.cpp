@@ -75,11 +75,12 @@ void ProcessTracker::run() {
 
             proc.running = true;
             emit stateChanged(proc.running);
-            //WaitForSingleObject(proc.handle, INFINITE);
-            while (
-                looping &&
-                (WaitForSingleObject(proc.handle, EMPTY_TIMEOUT) == WAIT_OBJECT_0)
-            ) QThread::msleep(2000);
+
+            // TODO: wait for process to finish
+            // while still being able to cancel
+            // at any time while still having
+            // acceptable performance
+            WaitForSingleObject(proc.handle, INFINITE);
 
             CloseHandle(proc.handle);
             proc.handle = NULL;
@@ -92,7 +93,7 @@ void ProcessTracker::run() {
             while (looping) {
                 refreshPid();
                 if (proc.pid != PID_NOT_FOUND) break;
-                QThread::msleep(2000);
+                QThread::msleep(POLLING_INTERVAL);
             }
         }
     }
