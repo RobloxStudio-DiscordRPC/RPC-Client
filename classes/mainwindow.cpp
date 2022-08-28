@@ -107,11 +107,36 @@ void MainWindow::loadParams(QJsonObject params) {
     const QJsonValue  editingVal = params.value("EDITING");
     const QJsonObject editing    = editingVal.toObject();
     if (editing.length() > 0) {
-        const QString name = editing.value("NAME").toString();
-        const QString type = editing.value("TYPE").toString();
+        const QString name = editing["NAME"].toString();
+        const QString type = editing["TYPE"].toString();
 
-        activity->SetState(("Editing script: " + name).toStdString().data());
-        activity->GetAssets().SetSmallImage(type.toLower().toStdString().data());
+        // bruh "c++ doesn't support string switch cases"
+        QStringList typeSwitchCase;
+        typeSwitchCase << "SCRIPT" << "GUI" << "BUILD";
+        QString statusPrefix;
+        switch (typeSwitchCase.indexOf(type)) {
+            case 0: // script
+                statusPrefix = "Editing script: {}";
+                break;
+
+            case 1: // gui
+                statusPrefix = "Designing GUI";
+                break;
+
+            case 2: // build
+                statusPrefix = "Building";
+                break;
+
+            default:
+                statusPrefix = "Editing: {}";
+                break;
+        }
+
+        //TODO: change name of model asset
+        const QString iconName = (type == "BUILD") ? "model" : type.toLower();
+
+        activity->SetState(statusPrefix.replace("{}", name).toStdString().data());
+        activity->GetAssets().SetSmallImage(iconName.toStdString().data());
         activity->GetAssets().SetSmallText(name.toStdString().data());
     } else {
         activity->SetState("");
