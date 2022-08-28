@@ -29,7 +29,7 @@ class ProcessTracker : public QThread {
     Q_OBJECT
 
     public:
-        explicit ProcessTracker(QString pname, QObject *parent = nullptr);
+        ProcessTracker(QString pname, QObject *parent = nullptr);
         ~ProcessTracker();
 
         Process proc;
