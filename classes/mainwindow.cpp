@@ -95,24 +95,32 @@ void MainWindow::initServer() {
 }
 
 void MainWindow::loadParams(QJsonObject params) {
+    Activity* activity = richPresence->activity;
+    activity->SetDetails(
+        (
+            QString("Working on: ") +
+            params["PROJECT"].toString()
+        ).toStdString().data()
+    );
 
     const bool editingExists = params.contains("EDITING");
     if (editingExists) {
         const QJsonValue  editingVal = params.value("EDITING");
-        const QJsonObject editing = editingVal.toObject();
+        const QJsonObject editing    = editingVal.toObject();
         const QString name = editing.value("NAME").toString();
         const QString type = editing.value("TYPE").toString();
 
         const QString out = QString("name: %1, type: %2").arg(name,type);
 
-        Activity* activity = richPresence->activity;
-        activity->SetState(("Editing script: " + name).toLocal8Bit().data());
+        activity->SetState(("Editing script: " + name).toStdString().data());
         activity->GetAssets().SetSmallImage(type.toLower().toStdString().data());
         activity->GetAssets().SetSmallText(name.toStdString().data());
-        richPresence->updateActivity();
 
         trayicon->showMessage("update rich presence", out);
     }
+
+    richPresence->resetElapsedTimer();
+    richPresence->updateActivity();
 }
 
 void MainWindow::initRichPresence() {

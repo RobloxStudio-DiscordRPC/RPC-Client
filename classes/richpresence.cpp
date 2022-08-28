@@ -80,6 +80,10 @@ void RichPresence::initActivity() {
     activity->GetAssets().SetLargeImage("rbxstudio");
     activity->GetAssets().SetLargeText("Roblox Studio");
     activity->SetType(ActivityType::Playing);
+    resetElapsedTimer();
+}
+
+void RichPresence::resetElapsedTimer() {
     activity->GetTimestamps().SetStart(QDateTime::currentMSecsSinceEpoch());
 }
 

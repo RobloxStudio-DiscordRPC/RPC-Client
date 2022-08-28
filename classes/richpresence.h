@@ -21,6 +21,7 @@ class RichPresence : public QThread {
 
         Activity* activity;
         void updateActivity();
+        void resetElapsedTimer();
 
         discord::Result coreError;
         discord::Result  rpcError;
