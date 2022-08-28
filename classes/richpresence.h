@@ -43,8 +43,6 @@ class RichPresence : public QThread {
         );
 
         Core* discordCore;
-
-        ActivityManager* manager;
         void initActivity();
 
         bool isStopped = false;

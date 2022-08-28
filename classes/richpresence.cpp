@@ -44,16 +44,14 @@ void RichPresence::errorMsg(const QString msg, const Result errCode) {
 void RichPresence::deinitDiscord() {
     delete discordCore;
     discordCore = NULL;
-    manager = NULL;
 }
 
 void RichPresence::initDiscord() {
-    Core* core{};
-    discordCore = core;
+    Core* core{}; discordCore = core; // bruh
     Result resp = Core::Create(
         appId,
         DiscordCreateFlags_NoRequireDiscord,
-        &discordCore
+        &discordCore // wtf! bro wants a pointer to a pointer!
     );
 
     if (resp != Result::Ok) {
@@ -66,9 +64,7 @@ void RichPresence::initDiscord() {
 
     coreError = resp;
 
-    if (resp == Result::Ok) {
-        manager = &discordCore->ActivityManager();
-    } else {
+    if (resp != Result::Ok) {
         deinitDiscord();
     }
 }
@@ -88,7 +84,7 @@ void RichPresence::resetElapsedTimer() {
 }
 
 void RichPresence::updateActivity() {
-    manager->UpdateActivity(*activity, [this](const Result result) {
+    discordCore->ActivityManager().UpdateActivity(*activity, [this](const Result result) {
         rpcError = result;
         //RichPresence::errorMsg("Couldn't update rich presence!", result);
     });
