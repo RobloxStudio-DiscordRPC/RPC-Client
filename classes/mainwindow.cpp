@@ -89,7 +89,7 @@ void MainWindow::closeEvent(QCloseEvent* event) {
 void MainWindow::initServer() {
     server = new Listener(this);
     connect(
-        server, &Listener::posted,
+        server, &Listener::rpcParamsSent,
         this, &MainWindow::loadParams
     );
 }

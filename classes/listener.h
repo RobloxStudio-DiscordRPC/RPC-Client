@@ -18,7 +18,8 @@ class Listener : public QThread, Server {
         ~Listener();
 
         signals:
-            void posted(QJsonObject params);
+            void rpcParamsSent(QJsonObject params);
+            void command(QString cmd);
 
     protected:
         void run();
