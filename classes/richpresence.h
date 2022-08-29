@@ -5,6 +5,7 @@
 #include <discord.h>
 #include <QMessageBox>
 #include <QCoreApplication>
+#include <QJsonObject>
 #include <QTimer>
 #include <QDateTime>
 
@@ -32,6 +33,12 @@ class RichPresence : public QThread {
 
         void initDiscord();
         void deinitDiscord();
+
+        public slots:
+            void processCommand(QString cmd);
+            void processParams(QJsonObject params);
+
+            void setActivityIdle();
 
     protected:
         void run();

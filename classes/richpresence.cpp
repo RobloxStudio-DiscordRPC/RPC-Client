@@ -43,6 +43,10 @@ void RichPresence::initDiscord() {
 
 void RichPresence::initActivity() {
     activity = new Activity{};
+    setActivityIdle();
+}
+
+void RichPresence::setActivityIdle() {
     activity->SetDetails("Idling");
     activity->GetAssets().SetLargeImage("rbxstudio");
     activity->GetAssets().SetLargeText("Roblox Studio");
@@ -58,6 +62,71 @@ void RichPresence::updateActivity() {
     discordCore->ActivityManager().UpdateActivity(*activity, [this](const Result result) {
         rpcError = result;
     });
+}
+void RichPresence::processCommand(QString cmd) {
+    // not many commands for now, remember to add a
+    /*
+    QStringList commands;
+    commands << "IDLE";
+    */
+    if (cmd == "IDLE") setActivityIdle();
+}
+
+void RichPresence::processParams(QJsonObject params) {
+    QString projName = params["PROJECT"].toString();
+    activity->SetDetails(
+        (
+            QString("Working on: ") +
+            params["PROJECT"].toString()
+        ).toStdString().data()
+    );
+
+    const QJsonObject editing = params["EDITING"].toObject();
+    if (editing.length() > 0) {
+        const QString name = editing["NAME"].toString();
+        const QString type = editing["TYPE"].toString();
+
+        // bruh "c++ doesn't support string switch cases"
+        QStringList typeSwitchCase;
+        typeSwitchCase << "SCRIPT" << "GUI" << "BUILD";
+        QString statusPrefix;
+        QString iconName;
+        switch (typeSwitchCase.indexOf(type)) {
+            case 0: // script
+                statusPrefix = "Editing script: {}";
+                iconName = editing["CLASS"].toString().toLower();
+                break;
+
+            case 1: // gui
+                statusPrefix = "Designing GUI";
+                iconName = "gui";
+                break;
+
+            case 2: // build
+                statusPrefix = "Building";
+                iconName = "model";
+                break;
+
+            default:
+                statusPrefix = "Editing: {}";
+                iconName = type.toLower();
+                break;
+        }
+
+        //TODO: change name of model asset
+
+        activity->SetState(statusPrefix.replace("{}", name).toStdString().data());
+        activity->GetAssets().SetSmallImage(iconName.toStdString().data());
+        activity->GetAssets().SetSmallText(name.toStdString().data());
+    } else {
+        activity->SetState("");
+        activity->GetAssets().SetSmallImage("workspace");
+        activity->GetAssets().SetSmallText(projName.toStdString().data());
+    }
+
+    // will fail building without this->???
+    this->resetElapsedTimer();
+    this->updateActivity();
 }
 
 void RichPresence::start() {

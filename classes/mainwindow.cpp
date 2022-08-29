@@ -88,64 +88,6 @@ void MainWindow::closeEvent(QCloseEvent* event) {
 
 void MainWindow::initServer() {
     server = new Listener(this);
-    connect(
-        server, &Listener::rpcParamsSent,
-        this, &MainWindow::loadParams
-    );
-}
-
-void MainWindow::loadParams(QJsonObject params) {
-    Activity* activity = richPresence->activity;
-    QString projName = params["PROJECT"].toString();
-    activity->SetDetails(
-        (
-            QString("Working on: ") +
-            params["PROJECT"].toString()
-        ).toStdString().data()
-    );
-
-    const QJsonValue  editingVal = params.value("EDITING");
-    const QJsonObject editing    = editingVal.toObject();
-    if (editing.length() > 0) {
-        const QString name = editing["NAME"].toString();
-        const QString type = editing["TYPE"].toString();
-
-        // bruh "c++ doesn't support string switch cases"
-        QStringList typeSwitchCase;
-        typeSwitchCase << "SCRIPT" << "GUI" << "BUILD";
-        QString statusPrefix;
-        switch (typeSwitchCase.indexOf(type)) {
-            case 0: // script
-                statusPrefix = "Editing script: {}";
-                break;
-
-            case 1: // gui
-                statusPrefix = "Designing GUI";
-                break;
-
-            case 2: // build
-                statusPrefix = "Building";
-                break;
-
-            default:
-                statusPrefix = "Editing: {}";
-                break;
-        }
-
-        //TODO: change name of model asset
-        const QString iconName = (type == "BUILD") ? "model" : type.toLower();
-
-        activity->SetState(statusPrefix.replace("{}", name).toStdString().data());
-        activity->GetAssets().SetSmallImage(iconName.toStdString().data());
-        activity->GetAssets().SetSmallText(name.toStdString().data());
-    } else {
-        activity->SetState("");
-        activity->GetAssets().SetSmallImage("workspace");
-        activity->GetAssets().SetSmallText(projName.toStdString().data());
-    }
-
-    richPresence->resetElapsedTimer();
-    richPresence->updateActivity();
 }
 
 void MainWindow::initRichPresence() {
@@ -166,6 +108,14 @@ void MainWindow::initRichPresence() {
             connect(
                 richPresence, &RichPresence::finished,
                 this, &MainWindow::refreshDiscord
+            );
+            connect(
+                server, &Listener::command,
+                richPresence, &RichPresence::processCommand
+            );
+            connect(
+                server, &Listener::rpcParamsSent,
+                richPresence, &RichPresence::processParams
             );
             break;
 

@@ -31,7 +31,12 @@ class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
-    Q_PROPERTY(bool startOnLogin READ startOnLogin WRITE setStartOnLogin NOTIFY startOnLoginChanged)
+    Q_PROPERTY(
+        bool startOnLogin
+        READ startOnLogin
+        WRITE setStartOnLogin
+        NOTIFY startOnLoginChanged
+    )
 
     public:
         MainWindow(QWidget *parent = nullptr);
@@ -72,8 +77,5 @@ class MainWindow : public QMainWindow
         QString getLoginLaunchLnkPath();
 
         static QFileInfo getExecutableInfo();
-
-        private slots:
-            void loadParams(QJsonObject params);
 };
 #endif // MAINWINDOW_H
