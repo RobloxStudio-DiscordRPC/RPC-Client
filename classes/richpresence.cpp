@@ -17,30 +17,6 @@ RichPresence::~RichPresence() {
     delete activity;
 }
 
-void RichPresence::errorMsg(const QString msg, const Result errCode) {
-    if (errCode == Result::Ok) return;
-
-    const QString txt = (
-        msg +
-        QString(" Error code: ") +
-        QString::number((int) errCode)
-    );
-
-    // will error because it tries to make gui in thread that isn't main thread
-    /*
-    QMessageBox::critical(
-        nullptr,
-        "Discord rich presence error occured!",
-        txt,
-        "Quit application"
-    );
-
-    */
-    qDebug() << txt;
-
-    //QCoreApplication::instance()->quit();
-}
-
 void RichPresence::deinitDiscord() {
     delete discordCore;
     discordCore = NULL;
@@ -53,10 +29,6 @@ void RichPresence::initDiscord() {
         DiscordCreateFlags_NoRequireDiscord,
         &discordCore // wtf! bro wants a pointer to a pointer!
     );
-
-    if (resp != Result::Ok) {
-        RichPresence::errorMsg("Couldn't initialize the Discord service!", resp);
-    }
 
     if (!discordCore) {
         resp = Result::InternalError;
@@ -72,7 +44,6 @@ void RichPresence::initDiscord() {
 void RichPresence::initActivity() {
     activity = new Activity{};
     activity->SetDetails("Idling");
-    //activity->SetState("");
     activity->GetAssets().SetLargeImage("rbxstudio");
     activity->GetAssets().SetLargeText("Roblox Studio");
     activity->SetType(ActivityType::Playing);
@@ -85,8 +56,7 @@ void RichPresence::resetElapsedTimer() {
 
 void RichPresence::updateActivity() {
     discordCore->ActivityManager().UpdateActivity(*activity, [this](const Result result) {
-        rpcError = result;
-        //RichPresence::errorMsg("Couldn't update rich presence!", result);
+        rpcError = result
     });
 }
 

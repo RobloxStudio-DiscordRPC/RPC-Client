@@ -37,11 +37,6 @@ class RichPresence : public QThread {
         void run();
 
     private:
-        void errorMsg(
-            const QString msg,
-            const discord::Result errCode
-        );
-
         Core* discordCore;
         void initActivity();
 
