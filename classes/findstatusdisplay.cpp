@@ -35,3 +35,11 @@ void FindStatusDisplay::setFound(bool f) {
     QPixmap icon(found ? tick : cross);
     iconLabel->setPixmap(icon);
 }
+
+FindStatusDisplay::~FindStatusDisplay() {
+    safedelete(layout);
+    safedelete(iconLabel);
+    safedelete(label);
+    safedelete(spacer);
+    safedelete(researchButton);
+}

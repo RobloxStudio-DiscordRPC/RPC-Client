@@ -5,6 +5,15 @@
 #include <QLabel>
 #include <QPushButton>
 
+#ifndef safedelete
+#define safedelete(x) { \
+    if ((x)!=NULL) { \
+        delete (x); \
+        (x)=NULL; \
+    } \
+}
+#endif
+
 class FindStatusDisplay : public QWidget
 {
     Q_OBJECT
@@ -13,6 +22,7 @@ class FindStatusDisplay : public QWidget
 
     public:
         FindStatusDisplay(QWidget* parent = nullptr);
+        ~FindStatusDisplay();
 
         void setFound(bool f);
         bool found;
