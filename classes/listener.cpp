@@ -16,7 +16,7 @@ void Listener::respond(const Request &req, Response &res) {
     const QString body(req.body.data());
     qDebug() << body;
 
-    if (contentType == "application/jsom") {
+    if (contentType == "application/json") {
         emit rpcParamsSent(QJsonDocument::fromJson(body.toUtf8()).object());
 
     } else if ((contentType == "text/plain") && body.startsWith('!')) {
