@@ -3,8 +3,6 @@
 ProcessTracker::ProcessTracker(QString pname, QObject *parent): QThread{parent} {
     proc.name = pname;
     refreshPid();
-
-    waitstop = CreateEvent(NULL, TRUE, FALSE, NULL);
 }
 
 ProcessTracker::~ProcessTracker() {
@@ -78,10 +76,11 @@ void ProcessTracker::run() {
             proc.running = true;
             emit stateChanged(proc.running);
 
-            HANDLE events[2];
-            events[0] = proc.handle;
-            events[1] = waitstop;
-            WaitForMultipleObjects(2, events, FALSE, INFINITE);
+            // TODO: wait for process to finish
+            // while still being able to cancel
+            // at any time while still having
+            // acceptable performance
+            WaitForSingleObject(proc.handle, INFINITE);
 
             CloseHandle(proc.handle);
             proc.handle = NULL;
@@ -101,11 +100,7 @@ void ProcessTracker::run() {
 }
 
 void ProcessTracker::stop() {
-    if (!isRunning()) return;
-
     looping = false;
-    bool wasRunning = proc.running;
-    if (wasRunning) SetEvent(waitstop);
 
     // if is running wait until it finishes
     if (isRunning()) {
@@ -116,6 +111,4 @@ void ProcessTracker::stop() {
         );
         waiter.exec();
     }
-
-    if (wasRunning) ResetEvent(waitstop);
 }
