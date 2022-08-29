@@ -40,6 +40,5 @@ FindStatusDisplay::~FindStatusDisplay() {
     safedelete(layout);
     safedelete(iconLabel);
     safedelete(label);
-    safedelete(spacer);
     safedelete(researchButton);
 }
