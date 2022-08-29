@@ -14,12 +14,14 @@
 #include <QStandardPaths>
 #include <QCloseEvent>
 
+#ifndef safedelete
 #define safedelete(x) { \
     if ((x)!=NULL) { \
         delete (x); \
         (x)=NULL; \
     } \
 }
+#endif
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }

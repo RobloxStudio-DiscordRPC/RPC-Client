@@ -13,6 +13,13 @@ SystemTrayIcon::SystemTrayIcon(): QSystemTrayIcon() {
     );
 }
 
+SystemTrayIcon::~SystemTrayIcon() {
+    safedelete(quit);
+    safedelete(about);
+    safedelete(openWindow);
+    safedelete(menu);
+}
+
 void SystemTrayIcon::initMenus() {
     menu = new QMenu();
 
