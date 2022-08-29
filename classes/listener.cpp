@@ -11,13 +11,17 @@ void Listener::run() {
 }
 
 void Listener::respond(const Request &req, Response &res) {
-    const std::string contentType = req.headers["Content-Type"];
+    const std::string contentType = fromHeaders(req.headers, "Content-Type");
+
     const QString body(req.body.data());
     qDebug() << body;
+
     if (contentType == "application/jsom") {
-        emit rpcParamsSent(QJsonDocument::fromJson(QByteArray(body)).object());
+        emit rpcParamsSent(QJsonDocument::fromJson(body.toUtf8()).object());
+
     } else if ((contentType == "text/plain") && body.startsWith('!')) {
-        emit command(body.remove(0,1));
+
+        emit command(body.mid(1));
     }
 
     res.set_content("success", "text/plain");
@@ -33,4 +37,9 @@ Listener::~Listener() {
     }
 
     // thank god these names are different :troll:
+}
+
+std::string Listener::fromHeaders(Headers headers, std::string key) {
+    for (auto& iter : headers) if (iter.first == key) return iter.second;
+    return NULL;
 }

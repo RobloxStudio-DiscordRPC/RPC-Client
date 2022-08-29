@@ -6,7 +6,6 @@
 #include <QJsonObject>
 #include <QDebug>
 #include <httplib.h>
-#include <string>
 
 using namespace httplib;
 
@@ -16,6 +15,11 @@ class Listener : public QThread, Server {
     public:
         Listener(QObject* parent = nullptr);
         ~Listener();
+
+        static std::string fromHeaders(
+            Headers headers,
+            std::string key
+        );
 
         signals:
             void rpcParamsSent(QJsonObject params);
