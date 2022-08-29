@@ -49,6 +49,7 @@ class ProcessTracker : public QThread {
 
     private:
         bool looping = false;
+        HANDLE waitstop = NULL;
 
         static void loopThroughProcesses(ProcessLoop callback);
 };
