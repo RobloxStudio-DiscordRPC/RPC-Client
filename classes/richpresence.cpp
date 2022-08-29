@@ -56,7 +56,7 @@ void RichPresence::resetElapsedTimer() {
 
 void RichPresence::updateActivity() {
     discordCore->ActivityManager().UpdateActivity(*activity, [this](const Result result) {
-        rpcError = result
+        rpcError = result;
     });
 }
 
