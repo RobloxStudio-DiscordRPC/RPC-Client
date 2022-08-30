@@ -43,15 +43,20 @@ void RichPresence::initDiscord() {
 
 void RichPresence::initActivity() {
     activity = new Activity{};
+    activity->SetType(ActivityType::Playing);
+    activity->GetAssets().SetLargeImage("rbxstudio");
+    activity->GetAssets().SetLargeText("Roblox Studio");
     setActivityIdle();
 }
 
 void RichPresence::setActivityIdle() {
     activity->SetDetails("Idling");
-    activity->GetAssets().SetLargeImage("rbxstudio");
-    activity->GetAssets().SetLargeText("Roblox Studio");
-    activity->SetType(ActivityType::Playing);
+    activity->GetAssets().SetSmallImage("");
+    activity->GetAssets().SetSmallText("");
+    activity->SetState("");
+
     resetElapsedTimer();
+    if (isRunning()) updateActivity();
 }
 
 void RichPresence::resetElapsedTimer() {
