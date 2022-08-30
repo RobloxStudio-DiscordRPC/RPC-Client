@@ -69,7 +69,7 @@ void RichPresence::updateActivity() {
     });
 }
 void RichPresence::processCommand(QString cmd) {
-    // not many commands for now, remember to add a
+    // not many commands for now, remember to add a switch case
     /*
     QStringList commands;
     commands << "IDLE";
@@ -77,56 +77,55 @@ void RichPresence::processCommand(QString cmd) {
     if (cmd == "IDLE") setActivityIdle();
 }
 
+char* RichPresence::fromFormat(QString format, QString value) {
+    return format.replace("{}", value).toStdString().data();
+}
+
 void RichPresence::processParams(QJsonObject params) {
-    QString projName = params["PROJECT"].toString();
-    activity->SetDetails(
-        (
-            QString("Working on: ") +
-            params["PROJECT"].toString()
-        ).toStdString().data()
-    );
+    const QJsonObject formats = params["FORMATS"].toObject();
+
+    const QString projName = params["PROJECT"].toString();
+    activity->SetDetails(fromFormat(formats["DETAILS"].toString(), projName));
+    activity->GetAssets().SetLargeText(formats["LARGE"].toString().toStdString().data());
 
     const QJsonObject editing = params["EDITING"].toObject();
     if (editing.length() > 0) {
         const QString name = editing["NAME"].toString();
         const QString type = editing["TYPE"].toString();
+        QString statusFormat = formats["STATE"][type].toString();
 
         // bruh "c++ doesn't support string switch cases"
         QStringList typeSwitchCase;
         typeSwitchCase << "SCRIPT" << "GUI" << "BUILD";
-        QString statusPrefix;
         QString iconName;
         switch (typeSwitchCase.indexOf(type)) {
             case 0: // script
-                statusPrefix = "Editing script: {}";
                 iconName = editing["CLASS"].toString().toLower();
                 break;
 
             case 1: // gui
-                statusPrefix = "Designing GUI";
                 iconName = "gui";
                 break;
 
             case 2: // build
-                statusPrefix = "Building";
                 iconName = "model";
                 break;
 
             default:
-                statusPrefix = "Editing: {}";
+                statusFormat = formats["STATE"]["DEFAULT"].toString();
                 iconName = type.toLower();
                 break;
         }
 
         //TODO: change name of model asset
 
-        activity->SetState(statusPrefix.replace("{}", name).toStdString().data());
-        activity->GetAssets().SetSmallImage(iconName.toStdString().data());
-        activity->GetAssets().SetSmallText(name.toStdString().data());
+        activity->SetState(fromFormat(statusFormat, name));
+        activity->GetAssets().SetSmallImage(fromFormat(iconName,  iconName));
+        activity->GetAssets().SetSmallText(fromFormat(formats["ASSETS"]["SMALL"].toString(), name));
     } else {
         activity->SetState("");
         activity->GetAssets().SetSmallImage("workspace");
-        activity->GetAssets().SetSmallText(projName.toStdString().data());
+        activity->GetAssets().SetSmallText(fromFormat(formats["ASSETS"]["SMALL"].toString(), projName));
     }
 
     // will fail building without this->???

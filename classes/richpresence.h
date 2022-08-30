@@ -47,6 +47,8 @@ class RichPresence : public QThread {
         Core* discordCore;
         void initActivity();
 
+        static char* fromFormat(QString format, QString value);
+
         bool isStopped = false;
 };
 
