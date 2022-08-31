@@ -105,10 +105,7 @@ void ProcessTracker::stop() {
 
     looping = false;
     bool wasRunning = proc.running;
-    if (wasRunning) {
-        const BOOL err = SetEvent(waitstop);
-        qDebug() << err << GetLastError();
-    }
+    if (wasRunning) SetEvent(waitstop);
 
     // if is running wait until it finishes
     if (isRunning()) {
