@@ -72,16 +72,12 @@ void RichPresence::processCommand(QString cmd) {
     if (cmd == "IDLE") setActivityIdle();
 }
 
-char* RichPresence::fromFormat(QString format, QString value) {
-    return format.replace("{}", value).toStdString().data();
-}
-
 void RichPresence::processParams(QJsonObject params) {
     const QJsonObject formats = params["FORMATS"].toObject();
 
     const QString projName = params["PROJECT"].toString();
-    activity->SetDetails(fromFormat(formats["DETAILS"].toString(), projName));
-    activity->GetAssets().SetLargeText(formats["LARGE"].toString().toStdString().data());
+    activity->SetDetails(formats["DETAILS"].toString().replace(REPLACER, projName).toUtf8().constData());
+    activity->GetAssets().SetLargeText(formats["STATE"]["LARGE"].toString().toUtf8().constData());
 
     const QJsonObject editing = params["EDITING"].toObject();
     if (editing.length() > 0) {
@@ -114,13 +110,13 @@ void RichPresence::processParams(QJsonObject params) {
 
         //TODO: change name of model asset
 
-        activity->SetState(fromFormat(statusFormat, name));
-        activity->GetAssets().SetSmallImage(fromFormat(iconName,  iconName));
-        activity->GetAssets().SetSmallText(fromFormat(formats["ASSETS"]["SMALL"].toString(), name));
+        activity->SetState(statusFormat.replace(REPLACER, name).toUtf8().constData());
+        activity->GetAssets().SetSmallImage(iconName.toUtf8().constData());
+        activity->GetAssets().SetSmallText(formats["ASSETS"]["SMALL"].toString().replace(REPLACER, name).toUtf8().constData());
     } else {
         activity->SetState("");
         activity->GetAssets().SetSmallImage("workspace");
-        activity->GetAssets().SetSmallText(fromFormat(formats["ASSETS"]["SMALL"].toString(), projName));
+        activity->GetAssets().SetSmallText(formats["ASSETS"]["SMALL"].toString().replace(REPLACER, projName).toUtf8().constData());
     }
 
     // will fail building without this->???

@@ -9,6 +9,8 @@
 #include <QTimer>
 #include <QDateTime>
 
+#define REPLACER "{}"
+
 using namespace discord;
 
 class RichPresence : public QThread {
@@ -46,8 +48,6 @@ class RichPresence : public QThread {
     private:
         Core* discordCore;
         void initActivity();
-
-        static char* fromFormat(QString format, QString value);
 
         bool isStopped = false;
 };
