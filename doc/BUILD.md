@@ -21,7 +21,7 @@ First, get the source.
 
 Clone this repository to your machine by running the following command in the command line:
 ```
-git clone https://github.com/RobloxStudio-DiscordRPC
+git clone https://github.com/RobloxStudio-DiscordRPC/RPC-Client
 ```
 You should know how it works.
 
