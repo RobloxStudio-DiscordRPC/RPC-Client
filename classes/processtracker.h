@@ -19,7 +19,6 @@ struct Process {
     QString name;
     int pid = PID_NOT_FOUND;
     bool running = false;
-    HANDLE handle = NULL;
 };
 
 typedef tagPROCESSENTRY32W ProcessInfo;
@@ -33,7 +32,6 @@ class ProcessTracker : public QThread {
         ~ProcessTracker();
 
         Process proc;
-        void refreshPid();
         bool isProcessRunning();
 
         static int getPidByName(const QString pname);
@@ -48,7 +46,6 @@ class ProcessTracker : public QThread {
         void run();
 
     private:
-        bool looping = false;
         HANDLE waitstop = NULL;
 
         static void loopThroughProcesses(ProcessLoop callback);
