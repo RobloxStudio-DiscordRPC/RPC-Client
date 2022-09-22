@@ -2,7 +2,7 @@
 
 ProcessTracker::ProcessTracker(QString pname, QObject *parent): QThread{parent} {
     proc.name = pname;
-    refreshPid();
+    proc.pid=getPidByName(proc.name);
 
     waitstop = CreateEvent(NULL, TRUE, FALSE, NULL);
 }
