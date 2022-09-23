@@ -66,54 +66,55 @@ void ProcessTracker::start() {
 void ProcessTracker::run() {
     bool looping = true;
     HANDLE procHandle = NULL;
-    proc.pid=getPidByName(proc.name);
+    HANDLE events[2];
+
+
 
     while (looping) {
-        procHandle = OpenProcess(SYNCHRONIZE, TRUE, proc.pid);
+        proc.pid=getPidByName(proc.name);
+        if (proc.pid!=PID_NOT_FOUND){
+            procHandle = OpenProcess(SYNCHRONIZE, FALSE, proc.pid);
 
-        proc.running = (procHandle != NULL);
-        emit stateChanged(proc.running);
+            proc.running = (procHandle != NULL);
+            emit stateChanged(proc.running);
 
-        if (proc.running) {
+            if (proc.running) {
+                events[0] = procHandle;
+                events[1] = waitstop;
+                switch (WaitForMultipleObjects(2, events, FALSE, INFINITE))
+                {
+                    case WAIT_OBJECT_0:   //Proc.handle
+                        emit stateChanged(false);
+                        break;
+                    case WAIT_OBJECT_0+1: //WaitStop Event
+                    case WAIT_FAILED:
+                        looping=false;
+                        break;
+                    default:
+                        break;
+                }
+                CloseHandle(procHandle);
+                procHandle = NULL;
 
-            HANDLE events[2];
-            events[0] = procHandle;
-            events[1] = waitstop;
-            switch (WaitForMultipleObjects(2, events, FALSE, INFINITE))
-            {
-                case WAIT_OBJECT_0:   //Proc.handle
-                    break;
-                case WAIT_OBJECT_0+1: //WaitStop Event
-                case WAIT_FAILED:
+            }
+          }else{
+            // active process search by name
+
+            switch (WaitForSingleObject(waitstop,POLLING_INTERVAL)){
+                case WAIT_TIMEOUT: break;
+                case WAIT_OBJECT_0:
                     looping=false;
                     break;
                 default:
+                    //TODO: Report the error!!!
+                    //QThread::msleep(POLLING_INTERVAL);
+                    looping=false;
                     break;
-            }
-            CloseHandle(procHandle);
-            procHandle = NULL;
+                 }
 
-        } else {
-            // active process search by name
-            while (looping){
-                proc.pid=getPidByName(proc.name);
-                if (proc.pid==PID_NOT_FOUND){
-                    switch (WaitForSingleObject(waitstop,POLLING_INTERVAL)){
-                        case WAIT_TIMEOUT: break;
-                        case WAIT_OBJECT_0:
-                            looping=false;
-                            break;
-                        default:
-                            //TODO: Report the error!!!
-                            //QThread::msleep(POLLING_INTERVAL);
-                            looping=false;
-                            break;
-                    }
+           }
+     }
 
-                }else break;
-            }
-        }
-    }
     //this->quit();
 }
 
