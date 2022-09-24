@@ -30,7 +30,7 @@ UI_DIR = ./interface
 
 # Program resources/metadata
 
-VERSION   = 1.0.0.3
+VERSION   = 1.0.0.4
 RESOURCES = assets/assets.qrc
 RC_ICONS  = assets/app.ico
 
