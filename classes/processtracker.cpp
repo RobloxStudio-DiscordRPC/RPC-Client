@@ -84,6 +84,7 @@ void ProcessTracker::run() {
                 switch (WaitForMultipleObjects(2, events, FALSE, INFINITE))
                 {
                     case WAIT_OBJECT_0:   //Proc.handle
+                        proc.running = false;
                         emit stateChanged(false);
                         break;
                     case WAIT_OBJECT_0+1: //WaitStop Event

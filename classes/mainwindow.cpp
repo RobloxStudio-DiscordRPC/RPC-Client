@@ -188,8 +188,8 @@ void MainWindow::initRbxStudioTracker() {
 void MainWindow::updateRobloxStudioStatus(const bool status) {
     ui->rbxstudioStatus->setFound(status);
     if (status) {
-        if (!richPresence->isRunning()) richPresence->start();
-    } else if (status) {
+        richPresence->start();
+    } else {
         richPresence->stop();
     }
 }
