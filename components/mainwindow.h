@@ -8,12 +8,12 @@
 
 #include <QMainWindow>
 #include <QProcess>
-#include <classes/listener.h>
-#include <classes/systemtrayicon.h>
-#include <classes/richpresence.h>
-#include <classes/findstatusdisplay.h>
-#include <classes/settings.h>
-#include <classes/processtracker.h>
+#include <components/listener.h>
+#include <components/systemtrayicon.h>
+#include <components/richpresence.h>
+#include <components/findstatusdisplay.h>
+#include <components/settings.h>
+#include <components/processtracker.h>
 #include <QFileInfo>
 #include <QDir>
 #include <QStandardPaths>
