@@ -4,6 +4,9 @@
 MainWindow::MainWindow(QWidget *parent): QMainWindow(parent) {
     ui = new Ui::MainWindow();
     ui->setupUi(this);
+
+    ui->version->setText(ui->version->text().arg(__VERSION__,__DATE__,__TIME__));
+
     richPresence=NULL;
     server=NULL;
 

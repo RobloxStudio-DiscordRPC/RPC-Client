@@ -1,6 +1,8 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#define __VERSION__ "1.0.0.3"
+
 #include <QMainWindow>
 #include <QProcess>
 #include <classes/listener.h>
