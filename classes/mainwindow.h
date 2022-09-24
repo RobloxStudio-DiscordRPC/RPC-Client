@@ -1,7 +1,10 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#define __VERSION__ "1.0.0.3"
+/**
+ * \def __VERSION__
+ * \brief App version
+ */
 
 #include <QMainWindow>
 #include <QProcess>

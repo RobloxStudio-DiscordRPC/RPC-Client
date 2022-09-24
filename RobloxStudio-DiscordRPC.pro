@@ -28,11 +28,21 @@ HEADERS -= $$files(libs/*, true)
 FORMS  = $$files(*.ui, true)
 UI_DIR = ./interface
 
-RESOURCES = assets/assets.qrc
+# Program resources/metadata
 
-win32 {
-    RC_FILE = assets/app.rc
-}
+VERSION   = 1.0.0.3
+RESOURCES = assets/assets.qrc
+RC_ICONS  = assets/app.ico
+
+QMAKE_TARGET_COMPANY = MatusGuy
+QMAKE_TARGET_DESCRIPTION = $$quote(Discord rich presence for Roblox Studio)
+QMAKE_TARGET_COPYRIGHT = $$quote(   © 2022-2023 MatusGuy)
+QMAKE_TARGET_PRODUCT = $$quote(Roblox Studio Discord RPC)
+QMAKE_TARGET_ORIGINAL_FILENAME = RobloxStudio-DiscordRPC.exe
+QMAKE_TARGET_INTERNALNAME = RSDRPC
+
+# Ability to access version in source code
+DEFINES += __VERSION__=$$quote(\\\"$${VERSION}\\\")
 
 # libraries
 
