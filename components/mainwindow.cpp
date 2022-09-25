@@ -35,6 +35,8 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent) {
 
     initRichPresence();
 
+    initUpdater();
+
     connect(
         ui->exitBtn, &QPushButton::pressed,
         trayicon, &SystemTrayIcon::quitApp
@@ -87,6 +89,11 @@ void MainWindow::closeEvent(QCloseEvent* event) {
     event->ignore();
 
     hide();
+}
+
+void MainWindow::initUpdater() {
+    updater = new GitHubUpdater(this, "RobloxStudio-DiscordRPC", "RPC-Client");
+    updater->check();
 }
 
 void MainWindow::initServer() {

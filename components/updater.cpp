@@ -4,16 +4,28 @@ GitHubUpdater::GitHubUpdater(
     QObject* parent,
     QString  repoOwner,
     QString  repoName
-): QObject(parent), Client("https://api.github.com") {
+): QNetworkAccessManager(parent) {
 
-    releasePath = QString("/repos/%1/%2/releases/latest").arg(repoOwner, repoName);
+    releaseUrl = QUrl(QString("https://api.github.com/repos/%1/%2/releases/latest").arg(repoOwner, repoName));
 
 }
 
 void GitHubUpdater::check() {
-    Response res = Get(releasePath.toStdString(), reqHeaders).value();
-    QJsonObject json = QJsonDocument::fromJson(QByteArray(res.body.data())).object();
+    QNetworkRequest request(releaseUrl);
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+    QNetworkReply* reply = get(request);
 
-    if (!json["prerelease"].toBool()) return;
-    qDebug() << json["tag_name"].toString();
+    bool timeout=false;
+
+    while(!timeout){
+        QApplication::instance()->processEvents();
+        if(reply->isFinished()) break;
+    }
+
+    if(reply->isFinished()){
+        QJsonDocument json = QJsonDocument::fromJson(reply->readAll());
+        qDebug() << json[0]["name"].toString();
+    }else{
+        qDebug() << "Timeout";
+    }
 }

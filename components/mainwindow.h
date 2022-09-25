@@ -14,6 +14,7 @@
 #include <components/findstatusdisplay.h>
 #include <components/settings.h>
 #include <components/processtracker.h>
+#include <components/updater.h>
 #include <QFileInfo>
 #include <QDir>
 #include <QStandardPaths>
@@ -71,11 +72,13 @@ class MainWindow : public QMainWindow
         Listener* server;
         RichPresence* richPresence;
         ProcessTracker* rbxStudioTracker;
+        GitHubUpdater* updater;
 
         void initServer();
         void initRichPresence();
         void initSettings();
         void initRbxStudioTracker();
+        void initUpdater();
 
         void updateRobloxStudioStatus(const bool status);
 

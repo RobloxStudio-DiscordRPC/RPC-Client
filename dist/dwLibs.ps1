@@ -42,6 +42,19 @@ Push("$($PSScriptRoot)\\..\\")
     Inform("Deleting cloned repository")
     Remove-Item -Path $httplibRepo -Force -Recurse
 
+    Inform("Cloning the openssl repository")
+    & git clone "https://github.com/openssl/openssl/" "..\openssl\" | Out-Null
+
+    Push($httplibRepo)
+        Inform("Getting version v3.0.5")
+        & git checkout tags/openssl-3.0.5 | Out-Null
+    Pop-Location
+
+    Copy-Item -Path "..\openssl\include\openssl\" libs\
+
+    Inform("Deleting cloned repository")
+    Remove-Item -Path ..\openssl\ -Force -Recurse
+
     Inform("Downloading the Discord GameSDK")
     Invoke-WebRequest -Uri "https://dl-game-sdk.discordapp.net/2.5.6/discord_game_sdk.zip" -OutFile ".\\discord_game_sdk.zip"
 
