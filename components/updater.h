@@ -3,40 +3,52 @@
 
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
+#include <QTemporaryFile>
+#include <QProcess>
 
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QJsonArray>
 
-#include <QApplication>
+#include <QTimer>
+#include <QEventLoop>
 
-#pragma region TOKEN {
-/**
- * \brief GitHub app access token
- * \link https://github.com/apps/updater-cpp
- */
-#define GH_TOKEN "Bearer eyJhbGciOiJSUzI1NiIsImN0eSI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiaWF0IjoxNjAzMzc2MDExLCJpc3MiOjI0MTM4Mn0.p3u0Sa5LnnXeawxAqyJfW_vcpSZaraUHpBnOX9y095WgOFWWOK9zv9_GCvqXtSpuUhT-fzMIscGnKpaFdYaBGBxyC335GpHfxTgkMFl2TTkWTHXAxxjABrmH4bLckWySN12rjrsXRAgdMhI8x7lJLp3n2zQ_3Iv_nlU6dy8fbXMBRvEGHU5nIGLBV99yx18F3w8WO4CXEv-iPQVIkwua4BKWdYEYSh9QdRmyh05X8nsnkmJiCNbn2xF0O79-WRP0IeeDmjMa6_pHICqetS7NQ7YLut2m1hk_KFQ-eBBuuS0kGsJPPy56rUkFQIaxQvaakTtyZKOlT82s9hXN4HSllg"
-#pragma endregion}
+#include <functional>
+
+struct RepoMetadata {
+    QString owner = "";
+    QString name  = "";
+};
 
 class GitHubUpdater : public QNetworkAccessManager {
     Q_OBJECT
 
     public:
-        explicit GitHubUpdater(
-            QObject* parent,
-            QString  repoOwner,
-            QString  repoName
+        explicit GitHubUpdater(QObject* parent);
+
+        QString getLatestRelease(bool onlyStable = true);
+
+        RepoMetadata repo;
+
+        /*!
+         * \brief Wait for passed reply to finish
+         * \param reply The reply to wait for
+         * \param timeout Wait timeout
+         * \return Returns false if timed out, returns true otherwise
+         */
+        static bool waitForNetReply(
+            QNetworkReply* reply,
+            int timeout = -1
         );
 
-        QUrl releaseUrl;
-        void check();
+        QTemporaryFile downloadVersion(
+            QString version,
+            std::function<void(int,int)> progressCallback = NULL
+        );
+
+        static void unzip(QFile* zip);
 
     private:
-        /*
-        static const inline Headers reqHeaders = {
-            {"Accept", "application/vnd.github+json"},
-            {"Authorization", GH_TOKEN}
-        };
-        */
 };
 
 #endif // UPDATER_H

@@ -48,12 +48,12 @@ DEFINES += __VERSION__=$$quote(\\\"$${VERSION}\\\")
 
 ## OPENSSL
 
-win32:OPENSSL = $$[QT_INSTALL_PREFIX]/../../Tools/OpenSSL/Win_x64/
+win32:OPENSSL = $$PWD/libs/openssl
 
 LIBS += -L$$OPENSSL/lib -llibcrypto
 LIBS += -L$$OPENSSL/lib -llibssl
 
-INCLUDEPATH += $$OPENSSL/include/openssl
+INCLUDEPATH += $$OPENSSL/include/
 
 ## httplib and possibly others
 INCLUDEPATH += libs/
