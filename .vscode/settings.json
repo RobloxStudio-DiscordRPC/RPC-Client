@@ -1,0 +1,10 @@
+{
+    "files.associations": {
+        "*.theme": "json",
+        "qnetworkreply": "cpp",
+        "qjsonobject": "cpp",
+        "qjsondocument": "cpp",
+        "qapplication": "cpp",
+        "qnetworkaccessmanager": "cpp"
+    }
+}
