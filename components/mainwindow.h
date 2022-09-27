@@ -19,6 +19,8 @@
 #include <QDir>
 #include <QStandardPaths>
 #include <QCloseEvent>
+#include <QProgressDialog>
+#include <QMessageBox>
 
 #ifndef safedelete
 #define safedelete(x) { \
@@ -72,13 +74,12 @@ class MainWindow : public QMainWindow
         Listener* server;
         RichPresence* richPresence;
         ProcessTracker* rbxStudioTracker;
-        GitHubUpdater* updater;
 
         void initServer();
         void initRichPresence();
         void initSettings();
         void initRbxStudioTracker();
-        void initUpdater();
+        void checkForUpdates();
 
         void updateRobloxStudioStatus(const bool status);
 

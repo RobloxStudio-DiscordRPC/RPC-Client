@@ -35,7 +35,7 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent) {
 
     initRichPresence();
 
-    initUpdater();
+    checkForUpdates();
 
     connect(
         ui->exitBtn, &QPushButton::pressed,
@@ -91,9 +91,45 @@ void MainWindow::closeEvent(QCloseEvent* event) {
     hide();
 }
 
-void MainWindow::initUpdater() {
-    updater = new GitHubUpdater(this, "RobloxStudio-DiscordRPC", "RPC-Client");
-    updater->check();
+void MainWindow::checkForUpdates() {
+    GitHubUpdater updater(this);
+    updater.repo.owner = "RobloxStudio-DiscordRPC";
+    updater.repo.name  = "RPC-Client";
+
+    QString latest = updater.getLatestRelease();
+
+    //if (latest.toStdString().c_str() == __VERSION__) return;
+
+    QMessageBox::StandardButton updatePrompt = QMessageBox::question(
+        this,
+        "New version available!",
+        "There's a new version of this program available.\nWould you like to download it?",
+        QMessageBox::Yes | QMessageBox::No,
+        QMessageBox::Yes
+    );
+
+    if (updatePrompt != QMessageBox::Yes) return;
+
+    QProgressDialog dialog(
+        "Downloading version "+latest,
+        "Cancel",
+        0,100,
+        this
+    );
+    dialog.setCancelButton(NULL);
+    dialog.setValue(0);
+    dialog.show();
+
+    updater.downloadVersion(latest, [&dialog](int received, int total) {
+        if (total==0) {
+            dialog.setValue(0);
+            return;
+        }
+        int value = (received/total)*dialog.maximum();
+        dialog.setValue(dialog.value()+value);
+    });
+
+    dialog.close();
 }
 
 void MainWindow::initServer() {

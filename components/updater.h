@@ -3,7 +3,9 @@
 
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
-#include <QTemporaryFile>
+
+#include <QFile>
+#include <QDir>
 #include <QProcess>
 
 #include <QJsonDocument>
@@ -41,7 +43,7 @@ class GitHubUpdater : public QNetworkAccessManager {
             int timeout = -1
         );
 
-        QTemporaryFile downloadVersion(
+        QFile downloadVersion(
             QString version,
             std::function<void(int,int)> progressCallback = NULL
         );
