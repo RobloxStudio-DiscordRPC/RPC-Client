@@ -81,7 +81,7 @@ QFile GitHubUpdater::downloadVersion(QString version,std::function<void(int,int)
         }
     );
 
-    if (!waitForNetReply(reply, 5000)) return QFile();
+    if (!waitForNetReply(reply)) return QFile();
 
     downloaded.close();
 

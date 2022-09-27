@@ -103,33 +103,30 @@ void MainWindow::checkForUpdates() {
     QMessageBox::StandardButton updatePrompt = QMessageBox::question(
         this,
         "New version available!",
-        "There's a new version of this program available.\nWould you like to download it?",
+        "There's a new version of this program available.\nWould you like to install it?",
         QMessageBox::Yes | QMessageBox::No,
         QMessageBox::Yes
     );
 
     if (updatePrompt != QMessageBox::Yes) return;
 
-    QProgressDialog dialog(
+    QProgressDialog downloadProgress(
         "Downloading version "+latest,
         "Cancel",
         0,100,
         this
     );
-    dialog.setCancelButton(NULL);
-    dialog.setValue(0);
-    dialog.show();
+    downloadProgress.setWindowTitle("Updater");
+    downloadProgress.setCancelButton(NULL);
+    downloadProgress.setValue(0);
+    downloadProgress.show();
 
-    updater.downloadVersion(latest, [&dialog](int received, int total) {
-        if (total==0) {
-            dialog.setValue(0);
-            return;
-        }
-        int value = (received/total)*dialog.maximum();
-        dialog.setValue(dialog.value()+value);
+    updater.downloadVersion(latest, [&downloadProgress](int received, int total) {
+        downloadProgress.setMaximum(total);
+        downloadProgress.setValue(received);
     });
 
-    dialog.close();
+    downloadProgress.close();
 }
 
 void MainWindow::initServer() {
