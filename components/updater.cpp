@@ -88,17 +88,130 @@ QFile GitHubUpdater::downloadVersion(QString version,std::function<void(int,int)
     return QFile(downloaded.fileName());
 }
 
-void GitHubUpdater::unzip(QFile* zip) {
-    if (!zip->fileName().endsWith(".zip")) return;
+bool GitHubUpdater::unzip(QFile* zip) {
+    if (!zip->fileName().endsWith(".zip")) return false;
+
+    QFileInfo zipInfo(*zip);
+
+    QDir destDir(zipInfo.absolutePath() + '\\'+ zipInfo.baseName());
+    if (!destDir.exists()) zipInfo.absoluteDir().mkdir(zipInfo.baseName());
+    else {
+        destDir.setNameFilters(QStringList() << "*");
+        destDir.setFilter(QDir::AllEntries);
+        foreach(QString child, destDir.entryList()) destDir.remove(child);
+    }
 
     #ifdef _WIN32
-        QProcess *process = new QProcess(zip);
-        QString pwsh("powershell.exe");
 
-        QString cmd(R"(-command "Expand-Archive -Path %1 -DestinationPath %2")");
-        cmd = cmd.arg(zip->fileName(), QDir::tempPath());
+        BSTR source = SysAllocString(QDir::toNativeSeparators(zipInfo.absoluteFilePath()).toStdWString().c_str());
+        BSTR dest   = SysAllocString(QDir::toNativeSeparators(destDir.absolutePath())    .toStdWString().c_str());
 
-        QStringList parameters{cmd};
-        process->start(pwsh, parameters);
+        //WORD     strlen = 0;
+        HRESULT     hResult;
+        IShellDispatch *pISD;
+        Folder  *pToFolder = NULL;
+        Folder  *pFromFolder = NULL;
+        FolderItems *pFolderItems = NULL;
+        //FolderItem *pItem = NULL;
+
+        VARIANT   vDir, vFile, vOpt;
+        //BSTR  strptr1, strptr2;
+        CoInitialize(NULL);
+
+        bool bReturn = false;
+
+        hResult = CoCreateInstance(CLSID_Shell, NULL, CLSCTX_INPROC_SERVER,
+        IID_IShellDispatch, (void **)&pISD);
+
+        if (FAILED(hResult)) return bReturn;
+
+        VariantInit(&vOpt);
+        vOpt.vt = VT_I4;
+        vOpt.lVal = 1024+512+256+16+8+4;     // Do not display a progress dialog box ~ This will not work properly!
+
+        VariantInit(&vFile);
+        vFile.vt = VT_BSTR;
+        vFile.bstrVal = source;
+        hResult = pISD->NameSpace(vFile, &pFromFolder);
+
+        VariantInit(&vDir);
+        vDir.vt = VT_BSTR;
+        vDir.bstrVal = dest;
+
+        hResult |= pISD->NameSpace(vDir, &pToFolder);
+
+        if(S_OK == hResult) {
+            hResult = pFromFolder->Items(&pFolderItems);
+            if(SUCCEEDED(hResult)) {
+                long lCount = 0;
+                pFolderItems->get_Count(&lCount);
+                IDispatch* pDispatch = NULL;
+                pFolderItems->QueryInterface(IID_IDispatch,(void**)&pDispatch);
+                VARIANT vtDispatch;
+                VariantInit(&vtDispatch);
+                vtDispatch.vt = VT_DISPATCH;
+                vtDispatch.pdispVal = pDispatch;
+
+                //cout << "Extracting files ...\n";
+                #ifdef QT_DEBUG
+                    try {
+                        hResult = pToFolder->CopyHere(vtDispatch,vOpt);
+                        if (hResult != S_OK) return false;
+                    }catch(int){}
+                #else
+                    hResult = pToFolder->CopyHere(vtDispatch,vOpt);
+                    if (hResult != S_OK) return false;
+                #endif
+
+
+
+                //Cross check and wait until all files are zipped!
+                FolderItems* pToFolderItems;
+                hResult = pToFolder->Items(&pToFolderItems);
+
+                if(S_OK == hResult) {
+                    long lCount2 = 0;
+
+                    hResult = pToFolderItems->get_Count(&lCount2);
+                    if(S_OK != hResult) {
+                        pFolderItems->Release();
+                        pToFolderItems->Release();
+                        SysFreeString(source);
+                        SysFreeString(dest);
+                        pISD->Release();
+                        CoUninitialize();
+                        return false;
+                    }
+                    //Use this code in a loop if you want to cross-check the items unzipped.
+                    /*if(lCount2 != lCount)
+                    {
+                    pFolderItems->Release();
+                    pToFolderItems->Release();
+                    SysFreeString(source);
+                    SysFreeString(strptr2);
+                    pISD->Release();
+                    CoUninitialize();
+                    return false;
+                    }*/
+
+                    bReturn = true;
+                }
+
+                pFolderItems->Release();
+                pToFolderItems->Release();
+            }
+
+            pToFolder->Release();
+            pFromFolder->Release();
+        }
+
+        //cout << "Over!\n";
+        SysFreeString(source);
+        SysFreeString(dest);
+        pISD->Release();
+
+        CoUninitialize();
+
+        return bReturn;
     #endif
 }

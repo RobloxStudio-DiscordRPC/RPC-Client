@@ -114,19 +114,22 @@ void MainWindow::checkForUpdates() {
         "Downloading version "+latest,
         "Cancel",
         0,100,
-        this
+        this,
+        Qt::CustomizeWindowHint | Qt::WindowTitleHint
     );
     downloadProgress.setWindowTitle("Updater");
     downloadProgress.setCancelButton(NULL);
     downloadProgress.setValue(0);
     downloadProgress.show();
 
-    updater.downloadVersion(latest, [&downloadProgress](int received, int total) {
+    QFile download = updater.downloadVersion(latest, [&downloadProgress](int received, int total) {
         downloadProgress.setMaximum(total);
         downloadProgress.setValue(received);
     });
 
     downloadProgress.close();
+
+    GitHubUpdater::unzip(&download);
 }
 
 void MainWindow::initServer() {

@@ -17,6 +17,13 @@
 
 #include <functional>
 
+#ifdef _WIN32
+    #include <shldisp.h>
+#pragma comment (lib, "Ole32.Lib")
+#pragma comment (lib, "OleAut32.lib")
+#endif
+
+
 struct RepoMetadata {
     QString owner = "";
     QString name  = "";
@@ -48,7 +55,7 @@ class GitHubUpdater : public QNetworkAccessManager {
             std::function<void(int,int)> progressCallback = NULL
         );
 
-        static void unzip(QFile* zip);
+        static bool unzip(QFile* zip);
 
     private:
 };

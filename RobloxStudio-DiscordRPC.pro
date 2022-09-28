@@ -46,6 +46,16 @@ DEFINES += __VERSION__=$$quote(\\\"$${VERSION}\\\")
 
 # libraries
 
+## shell32
+win32:LIBS +=
+    -L$$quote(C:/Program Files (x86)/Windows Kits/10/Lib/10.0.19041.0/um/x64)
+    -lshell32
+
+win32:LIBS +=
+    -L$$quote(C:/Program Files (x86)/Windows Kits/10/Lib/10.0.19041.0/um/x64)
+    -lOle32
+
+
 ## OPENSSL
 
 win32:OPENSSL = $$PWD/libs/openssl
