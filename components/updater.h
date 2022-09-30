@@ -19,8 +19,8 @@
 
 #ifdef _WIN32
     #include <shldisp.h>
-#pragma comment (lib, "Ole32.Lib")
-#pragma comment (lib, "OleAut32.lib")
+    #pragma comment (lib, "Ole32.Lib")
+    #pragma comment (lib, "OleAut32.lib")
 #endif
 
 

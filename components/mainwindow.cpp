@@ -110,26 +110,30 @@ void MainWindow::checkForUpdates() {
 
     if (updatePrompt != QMessageBox::Yes) return;
 
-    QProgressDialog downloadProgress(
+    QProgressDialog progDiag(
         "Downloading version "+latest,
         "Cancel",
         0,100,
         this,
-        Qt::CustomizeWindowHint | Qt::WindowTitleHint
+        Qt::Dialog | Qt::Desktop
     );
-    downloadProgress.setWindowTitle("Updater");
-    downloadProgress.setCancelButton(NULL);
-    downloadProgress.setValue(0);
-    downloadProgress.show();
+    progDiag.setAutoClose(false);
+    progDiag.setWindowIcon(windowIcon());
+    progDiag.setWindowTitle("Updater");
+    progDiag.setCancelButton(NULL);
+    progDiag.setValue(0);
+    progDiag.open();
 
-    QFile download = updater.downloadVersion(latest, [&downloadProgress](int received, int total) {
-        downloadProgress.setMaximum(total);
-        downloadProgress.setValue(received);
+    QFile download = updater.downloadVersion(latest, [&progDiag](int received, int total) {
+        progDiag.setMaximum(total);
+        progDiag.setValue(received);
     });
 
-    downloadProgress.close();
-
+    progDiag.setRange(0,0);
+    progDiag.setLabelText("Unpacking version"+latest);
     GitHubUpdater::unzip(&download);
+
+    progDiag.close();
 }
 
 void MainWindow::initServer() {
